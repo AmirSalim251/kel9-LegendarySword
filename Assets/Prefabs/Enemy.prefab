@@ -115,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterName: Pikapika
   monsterID: 999
-  baseHP: 1500
+  baseHP: 350
   curHP: 0
-  monsterATK: 10
-  monsterDEF: 10
+  monsterATK: 25
+  monsterDEF: 30

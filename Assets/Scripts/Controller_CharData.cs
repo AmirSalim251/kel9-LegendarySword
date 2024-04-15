@@ -25,8 +25,9 @@ public class Controller_CharData : MonoBehaviour
     public int charATK;
     public int charDEF;
 
+    public bool isDead = false;
     public bool isBlocking = false;
-
+    int DefChance;
 
     // Start is called before the first frame update
     void Start()
@@ -98,6 +99,7 @@ public class Controller_CharData : MonoBehaviour
 
         if(curHP <= 0)
         {
+            curHP = 0;
             return true;
         }
         else
@@ -115,7 +117,7 @@ public class Controller_CharData : MonoBehaviour
 
     public void Blocking()
     {
-        int DefChance = Random.Range(0,1);
+        DefChance = Random.Range(0,2);
         if (DefChance == 1)
         {
             Debug.Log("Block berhasil");
@@ -126,4 +128,5 @@ public class Controller_CharData : MonoBehaviour
             isBlocking = false;
         }
     }
+    
 }

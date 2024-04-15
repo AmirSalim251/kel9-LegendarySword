@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -27,13 +29,23 @@ public class GameController : MonoBehaviour
     public Model_CharData charDataFreya;
     public Model_CharData charDataMagnus;
 
+    public TMP_Text P1Name;
+    public TMP_Text P2Name;
+    public TMP_Text P3Name;
+
+    public TMP_Text P1HP;
+    public TMP_Text P2HP;
+    public TMP_Text P3HP;
+
     // Start is called before the first frame update
     void Start()
     {
         GetStageID();
         GenerateMonster();
         charDataAlex = LoadCharData();
-
+        P1Name.text = Controller_Battle.player1Unit.charName;
+        P2Name.text = Controller_Battle.player2Unit.charName;
+        P3Name.text = Controller_Battle.player3Unit.charName;
     }
 
     // Update is called once per frame
