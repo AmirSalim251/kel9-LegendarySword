@@ -7,13 +7,11 @@ public class Unit : MonoBehaviour
 	public string unitName;
     
     public int maxHP;
-    public int maxMP;
+    public int maxSP;
     public int attack;
     public int defense;
 	public int currentHP;
-	public int currentMP;
-
-    public UnitStats alex = new UnitStats("Alex");
+	public int currentSP;
 
 	void Start ()
 	{
@@ -25,21 +23,21 @@ public class Unit : MonoBehaviour
         if (unitName == "Alex")
         {
             maxHP = 150;
-            maxMP = 5;
+            maxSP = 5;
             attack = 25;
             defense = 20;
         }
         else if (unitName == "Freya")
         {
             maxHP = 120;
-            maxMP = 6;
+            maxSP = 6;
             attack = 18;
             defense = 15;
         }
         else if (unitName == "Magnus")
         {
             maxHP = 130;
-            maxMP = 6;
+            maxSP = 6;
             attack = 15;
             defense = 25;
         }
@@ -57,7 +55,7 @@ public class Unit : MonoBehaviour
 		}
         
         currentHP = maxHP;
-        currentMP = maxMP;
+        currentSP = maxSP;
     }
 
 	public bool TakeDamage(int dmg)

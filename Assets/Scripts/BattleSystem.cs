@@ -55,7 +55,7 @@ public class BattleSystem : MonoBehaviour
 
 		enemy1Unit = enemy1Prefab.GetComponent<Unit>();
 
-		// dialogueText.text = enemy1Unit.unitName + " approaches...";
+		dialogueText.text = enemy1Unit.unitName + " wants to fight...";
 
 		playerHUD.SetHUD(activePlayer);
 		enemyHUD.SetHUD(enemy1Unit);
@@ -71,7 +71,7 @@ public class BattleSystem : MonoBehaviour
 		isActionAllowed = false;
 		bool isDead = enemy1Unit.TakeDamage(activePlayer.attack);
 
-		dialogueText.text = activePlayer.name + " used Attack";
+		dialogueText.text = activePlayer.unitName + " used Attack";
 		yield return new WaitForSeconds(2f);
 		enemyHUD.SetHP(enemy1Unit.currentHP);
 		dialogueText.text = "The attack is successful!";
