@@ -29,40 +29,35 @@ public class GameController : MonoBehaviour
     public Model_CharData charDataFreya;
     public Model_CharData charDataMagnus;
 
-    public TMP_Text P1Name;
-    public TMP_Text P2Name;
-    public TMP_Text P3Name;
-
-    public TMP_Text P1HP;
-    public TMP_Text P2HP;
-    public TMP_Text P3HP;
+   
 
     // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
         GetStageID();
         GenerateMonster();
-        charDataAlex = LoadCharData();
-        P1Name.text = Controller_Battle.player1Unit.charName;
-        P2Name.text = Controller_Battle.player2Unit.charName;
-        P3Name.text = Controller_Battle.player3Unit.charName;
+    }
+    void Start()
+    {
+        /*charDataAlex = LoadCharData();*/
+   
+
     }
 
     // Update is called once per frame
     void Update()
     {
         /*saveController(charDataController.charData1);*/
-        
+
     }
-    
-    
+
+
 
     public void GenerateMonster()
     {
         if(monster != null)
         {
-            /*Instantiate(monster, monsterSpawnPos, Quaternion.EulerRotation(0, 90, 0));*/
-            /*Instantiate(monster, monsterSpawnPos, Quaternion.identity);*/
             Instantiate(monster, monsterSpawnPos, Quaternion.Euler(0,90,0));
         }
     }

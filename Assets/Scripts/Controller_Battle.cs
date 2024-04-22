@@ -4,14 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum BattleState { START, PLAYERTURN, PLAYER2TURN, PLAYER3TURN, ENEMYTURN, WON, LOST }
 
 public class Controller_Battle : MonoBehaviour
 {
-    /*public GameObject ActivePlayer;
-    public GameObject ActiveEnemy;*/
+    public TMP_Text Log;
+
+    public GameObject P1UI;
+    public GameObject P2UI;
+    public GameObject P3UI;
 
     int turnCount;
     public TMP_Text turnCounter;
@@ -27,7 +31,7 @@ public class Controller_Battle : MonoBehaviour
 
     public int[] PlayerAlive = {1,2,3,4};
 
-    Controller_EnemyData enemyUnit;
+    public static Controller_EnemyData enemyUnit;
 
     public BattleState state;
 
@@ -43,6 +47,7 @@ public class Controller_Battle : MonoBehaviour
     void Update()
     {
         turnCounter.SetText(turnCount.ToString());
+        CheckTurn();
     }
     IEnumerator SetupBattle()
     {
@@ -50,14 +55,18 @@ public class Controller_Battle : MonoBehaviour
         player2Unit = GameObject.FindGameObjectWithTag("Player 2").GetComponent<Controller_CharData>();
         player3Unit = GameObject.FindGameObjectWithTag("Player 3").GetComponent<Controller_CharData>();
 
-        yield return new WaitForSeconds(1f);
-        
+        /*yield return new WaitForSeconds(1f);*/
+
+        enemyUnit = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();
+
         ActivePlayer = player1Unit;
-        ActiveEnemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();
+        /*ActiveEnemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();*/
+        ActiveEnemy = enemyUnit;
 
         yield return new WaitForSeconds(1f);
 
         Debug.Log("Game Start");
+        Log.text = "Game Start";
 
         turnCount = 0;
         state = BattleState.PLAYERTURN;
@@ -76,6 +85,9 @@ public class Controller_Battle : MonoBehaviour
 
         bool isDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
 
+        Log.text = ActivePlayer.charName + " is attacking!";
+
+        yield return new WaitForSeconds(1f);
         if (ActiveEnemy.baseHP != ActiveEnemy.curHP)
         {
             Debug.Log("Attack berhasil");
@@ -87,75 +99,27 @@ public class Controller_Battle : MonoBehaviour
             Debug.Log("Attack gagal");
         }
 
-        yield return new WaitForSeconds(1f);
-
         if (isDead)
         {
             state = BattleState.WON;
-            EndBattle();
+            StartCoroutine(EndBattle());
         }
         else
         {
-            if (state == BattleState.PLAYERTURN)
-            {
-                if (!player2Unit.isDead)
-                {
-                    state = BattleState.PLAYER2TURN;
-                    ActivePlayer = player2Unit;
-                    PlayerTurn();
-                }
-                else
-                {
-                    state = BattleState.PLAYER3TURN;
-                    ActivePlayer = player3Unit;
-                    PlayerTurn();
-                }
-                
-            }
-            else if (state == BattleState.PLAYER2TURN)
-            {
-                if (!player3Unit.isDead)
-                {
-                    state = BattleState.PLAYER3TURN;
-                    ActivePlayer = player3Unit;
-                    PlayerTurn();
-                }
-                else
-                {
-                    state = BattleState.ENEMYTURN;
-                    ActivePlayer = player1Unit;
-                    StartCoroutine(EnemyTurn());
-                }
-            }
-            else
-            {
-                state = BattleState.ENEMYTURN;
-                if (player1Unit.isDead)
-                {
-                    ActivePlayer = player2Unit;
-                    if (player2Unit.isDead)
-                    {
-                        ActivePlayer = player3Unit;
-                    }
-                }
-                else
-                {
-                    ActivePlayer = player1Unit;
-                }
-                StartCoroutine(EnemyTurn());
-            }
+            PassTurn();
         }
     }
 
     IEnumerator HeroDefend()
     {
         isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is trying to block!";
 
         yield return new WaitForSeconds(1f);
-
+        
         ActivePlayer.Blocking();
 
-        if (state == BattleState.PLAYERTURN)
+        /*if (state == BattleState.PLAYERTURN)
         {
             state = BattleState.PLAYER2TURN;
             ActivePlayer = player2Unit;
@@ -172,7 +136,9 @@ public class Controller_Battle : MonoBehaviour
             state = BattleState.ENEMYTURN;
             ActivePlayer = player1Unit;
             StartCoroutine(EnemyTurn());
-        }
+        }*/
+
+        PassTurn();
 
         yield return new WaitForSeconds(1f);
 
@@ -186,12 +152,85 @@ public class Controller_Battle : MonoBehaviour
     void PlayerTurn()
     {
         isActionAllowed = true;
-        turnCount++;
         Debug.Log("Turn: " + ActivePlayer.charName);
+        Log.text = ActivePlayer.charName + "'s turn!";
+        if (state == BattleState.PLAYERTURN)
+        {
+            P1UI.transform.position += new Vector3(0, 10f, 0);
+        }
+
+    }
+
+    void CheckTurn()
+    {
+        /*if (state == BattleState.PLAYERTURN)
+        {
+            P1UI.transform.position += new Vector3(0, 5f, 0);
+        }*/
+    }
+
+    void PassTurn()
+    {
+        if (state == BattleState.PLAYERTURN)
+        {
+            P1UI.transform.position -= new Vector3(0, 10f, 0);
+            if (!player2Unit.isDead)
+            {
+                P2UI.transform.position += new Vector3(0, 10f, 0);
+                state = BattleState.PLAYER2TURN;
+                ActivePlayer = player2Unit;
+                PlayerTurn();
+            }
+            else
+            {
+                P3UI.transform.position += new Vector3(0, 10f, 0);
+                state = BattleState.PLAYER3TURN;
+                ActivePlayer = player3Unit;
+                PlayerTurn();
+            }
+
+        }
+        else if (state == BattleState.PLAYER2TURN)
+        {
+            P2UI.transform.position -= new Vector3(0, 10f, 0);
+            if (!player3Unit.isDead)
+            {
+                P3UI.transform.position += new Vector3(0, 10f, 0);
+                state = BattleState.PLAYER3TURN;
+                ActivePlayer = player3Unit;
+                PlayerTurn();
+            }
+            else
+            {
+                state = BattleState.ENEMYTURN;
+                ActivePlayer = player1Unit;
+                StartCoroutine(EnemyTurn());
+            }
+        }
+        else
+        {
+            P3UI.transform.position -= new Vector3(0, 10f, 0);
+            state = BattleState.ENEMYTURN;
+            if (player1Unit.isDead)
+            {
+                ActivePlayer = player2Unit;
+                if (player2Unit.isDead)
+                {
+                    ActivePlayer = player3Unit;
+                }
+            }
+            else
+            {
+                ActivePlayer = player1Unit;
+            }
+            StartCoroutine(EnemyTurn());
+        }
     }
 
     IEnumerator EnemyTurn()
     {
+        Log.text = "Enemy's turn!";
+
         isActionAllowed = false;
 
         yield return new WaitForSeconds(1f);
@@ -244,6 +283,7 @@ public class Controller_Battle : MonoBehaviour
 
 
         Debug.Log("Enemy targetted: " + ActiveTarget.charName);
+        Log.text = "Enemy is attacking " + ActiveTarget.charName;
 
         if (ActiveTarget.isBlocking == false)
         {
@@ -257,6 +297,7 @@ public class Controller_Battle : MonoBehaviour
         else if (ActiveTarget.isBlocking == true)
         {
             Debug.Log("Attack dihentikan");
+            Log.text = ActiveTarget.charName + " blocked enemy's attack!";
         }
         
         /*playerHUD.SetHP(playerUnit.currentHP);*/
@@ -317,21 +358,27 @@ public class Controller_Battle : MonoBehaviour
             }
             PlayerTurn();
         }
+        turnCount++;
+
 
     }
 
-    void EndBattle()
+    IEnumerator EndBattle()
     {
         if (state == BattleState.WON)
         {
-            /*dialogueText.text = "You won the battle!";*/
+            Log.text = "You Won!";
+            yield return new WaitForSeconds(1f);
             Debug.Log("You won");
+            
         }
         else if (state == BattleState.LOST)
         {
-            /*dialogueText.text = "You were defeated.";*/
+            Log.text = "You Lose!";
+            yield return new WaitForSeconds(1f);
             Debug.Log("You lose");
         }
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void OnAttackButton()
@@ -349,4 +396,5 @@ public class Controller_Battle : MonoBehaviour
         StartCoroutine(HeroDefend());
     }
 
+    
 }

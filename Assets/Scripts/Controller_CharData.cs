@@ -125,6 +125,7 @@ public class Controller_CharData : MonoBehaviour
         }
         else if(DefChance == 0)
         {
+            Debug.Log("Block gagal");
             isBlocking = false;
         }
     }
