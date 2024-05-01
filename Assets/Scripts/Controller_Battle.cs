@@ -25,6 +25,8 @@ public class Controller_Battle : MonoBehaviour
 
     Controller_CharData ActiveTarget;
 
+    A_Smash_QTE_Controller qteController;
+    
 
     public static Controller_CharData player1Unit;
     public static Controller_CharData player2Unit;
@@ -35,8 +37,6 @@ public class Controller_Battle : MonoBehaviour
     public static Controller_EnemyData enemyUnit;
 
     public BattleState state;
-
-    [SerializeField] public Image qteIndicator;
 
     bool isActionAllowed;
 
@@ -78,50 +78,14 @@ public class Controller_Battle : MonoBehaviour
 
     IEnumerator QTEEvent()
     {
+        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
         Log.text = "Press 'A' key repeatedly to attack!";
-        float timeLimit = 3f; // Adjust the time limit as desired
-        float currentTime = 0f;
-        float fillAmount = 0f;
-        float decreaseRate = 0.2f;
-        float increaseRate = 0.1f;
-
-        while (currentTime < timeLimit)
-        {
-            currentTime += Time.deltaTime;
-
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                fillAmount += increaseRate;
-                qteIndicator.fillAmount = fillAmount;
-            }
-            else
-            {
-                fillAmount -= decreaseRate * Time.deltaTime;
-            }
-
-            fillAmount = Mathf.Clamp01(fillAmount);
-            qteIndicator.fillAmount = fillAmount;
-
-            if (fillAmount >= 1f)
-            {
-                Log.text = "Attack successful!";
-                StartCoroutine(HeroAttack());
-                qteIndicator.fillAmount = 0f;
-                break;
-            }
-
-            yield return null;
-        }
-
-        if (fillAmount < 1f)
-        {
-            Log.text = "Attack missed!";
-            qteIndicator.fillAmount = 0f;
-            PassTurn();
-        }
+        Debug.Log("Press 'A' key repeatedly to attack!");
+        qteController.SmashQTE();
+        yield return null;
     }
 
-    IEnumerator HeroAttack()
+    public IEnumerator HeroAttack()
     {
         isActionAllowed = false;
 
@@ -217,7 +181,7 @@ public class Controller_Battle : MonoBehaviour
         }*/
     }
 
-    void PassTurn()
+    public void PassTurn()
     {
         if (state == BattleState.PLAYERTURN)
         {

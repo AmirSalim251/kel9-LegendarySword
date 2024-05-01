@@ -8,9 +8,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
 {
     Controller_Battle ControllerBattle;
 
-    public float fill_Amount = 1;
-    public float timer = 0;
-    public bool QTE_Check = false;
+    [SerializeField] public Image qteIndicator;
 
     void Start()
     {
@@ -22,37 +20,54 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     {
         
     }
+    
     public void SmashQTE() 
     {
-        if(Input.GetKeyDown(KeyCode.A))
+        Debug.Log("qte mulai!");
+        float timeLimit = 3f; // Adjust the time limit as desired
+        float currentTime = 0f;
+        float fillAmount = 0f;
+        float decreaseRate = 0.2f;
+        float increaseRate = 0.1f;
+        ControllerBattle = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
+        while (currentTime < timeLimit)
         {
-            fill_Amount -= .2f;
-            Debug.Log("A QTE Worked");
+            Debug.Log("masuk loop while");
+            currentTime += Time.deltaTime;
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                Debug.Log("mana key A");
+                fillAmount += increaseRate;
+                qteIndicator.fillAmount = fillAmount;
+            }
+            if (currentTime > 0.5f)
+            {
+                currentTime = 0;
+                Debug.Log("berkurang nih");
+                fillAmount -= decreaseRate;
+            }
+
+            fillAmount = Mathf.Clamp01(fillAmount);
+            qteIndicator.fillAmount = fillAmount;
+
+            if (fillAmount >= 1f)
+            {
+                ControllerBattle.Log.text = "Attack successful!";
+                Debug.Log("Attack successful!");
+                StartCoroutine(ControllerBattle.HeroAttack());
+                qteIndicator.fillAmount = 0f;
+                break;
+            }
         }
 
-        timer += Time.deltaTime;
-        if(timer > .05)
+        if (fillAmount < 1f)
         {
-            timer = 0;
-            fill_Amount += .02f; 
+            ControllerBattle.Log.text = "Attack missed!";
+            Debug.Log("Attack missed!");
+            qteIndicator.fillAmount = 0f;
+            ControllerBattle.PassTurn();
         }
-        if(fill_Amount > 1 )
-        {
-            fill_Amount = 1;
-        }
-        if(fill_Amount >= 1 )
-        {
-            QTE_Check = true;           
-        }
-        if(fill_Amount <= 0 )
-        {
-            ControllerBattle.Log.text = "QTE Success";
-        }
-        else
-        {
-            ControllerBattle.Log.text = "QTE Failed";
-        }
-        GetComponent<Image>().fillAmount = fill_Amount;
     }
 }
 
