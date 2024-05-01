@@ -296,7 +296,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 298, y: 226}
+  m_AnchoredPosition: {x: 298, y: 187}
   m_SizeDelta: {x: 112.2276, y: 11.5112}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &204706719
@@ -1304,6 +1304,7 @@ MonoBehaviour:
   scrController: {fileID: 368705566}
   mainCamObj: {fileID: 1994654277}
   mainCam: {fileID: 1994654279}
+  targetTransform: {fileID: 249758926}
 --- !u!4 &1489637310
 Transform:
   m_ObjectHideFlags: 0

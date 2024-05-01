@@ -22,9 +22,7 @@ public class Bar : MonoBehaviour
     void Start()
     {
         
-        bar_scale = bar.GetComponent<RectTransform>();
-        
-        
+        bar_scale = bar.GetComponent<RectTransform>();    
     }
 
     // Update is called once per frame
@@ -32,6 +30,10 @@ public class Bar : MonoBehaviour
     { 
         if(bar_scale.localScale.x == 286){
             animateBar();
+        }
+
+        else{
+            setDefaultPos();
         }
              
     }
@@ -55,7 +57,10 @@ public class Bar : MonoBehaviour
     }
 
     public void setDefaultPos(){
-        cube.GetComponent<Transform>().position = new Vector3(0,1f,0);
+       cube.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+    cube.GetComponent<Transform>().rotation = Quaternion.Euler(0, 0, 0);
+    cube.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+    cube.GetComponent<Transform>().position = new Vector3(0, 1f, 0);
 
     }
 

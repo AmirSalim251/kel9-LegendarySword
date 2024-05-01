@@ -10,6 +10,7 @@ public class ButtonHandler : MonoBehaviour
     public GameObject scrController;
     public GameObject mainCamObj;
      public CameraController mainCam;
+     public Transform targetTransform;
     
    public void onClick(){
     
@@ -17,9 +18,6 @@ public class ButtonHandler : MonoBehaviour
     button.SetActive(false);
     scrController.SetActive(true);
     mainCamObj.SetActive(true);
-    mainCam.FollowTarget(mainCam.target,mainCam.length);
-    
-
-
+    mainCam.FollowTarget(targetTransform,5);
    }
 }

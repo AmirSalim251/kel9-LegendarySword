@@ -78,6 +78,7 @@ public class CameraController : MonoBehaviour
       timer += Time.deltaTime;
       yield return new WaitForEndOfFrame();
     }
+    timer = 0;
 
     mainCam.transform.position = target;
   }
