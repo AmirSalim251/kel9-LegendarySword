@@ -43,6 +43,7 @@ public class Controller_Battle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
         StartCoroutine(SetupBattle());
     }
 
@@ -78,10 +79,9 @@ public class Controller_Battle : MonoBehaviour
 
     IEnumerator QTEEvent()
     {
-        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
         Log.text = "Press 'A' key repeatedly to attack!";
         Debug.Log("Press 'A' key repeatedly to attack!");
-        qteController.SmashQTE();
+        qteController.enabled = true;
         yield return null;
     }
 
@@ -400,6 +400,7 @@ public class Controller_Battle : MonoBehaviour
         if (state == BattleState.PLAYERTURN)
         {
             StartCoroutine(QTEEvent());
+            // qteController.enabled = false;
         }
         else
         {
