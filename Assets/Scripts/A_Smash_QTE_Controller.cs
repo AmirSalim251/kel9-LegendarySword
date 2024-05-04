@@ -12,8 +12,8 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     public float currentTime = 0f;
     public float timeLimit = 10f;
     public float fillAmount = 0;
-    public float decreaseRate = 0.3f;
-    public float increaseRate = 0.005f;
+    public float decreaseRate = 0.05f;
+    public float increaseRate = 0.2f;
 
     public Image qteIndicator;
 
@@ -24,29 +24,28 @@ public class A_Smash_QTE_Controller : MonoBehaviour
         qteIndicator.fillAmount = 0f;
     }
 
-    void Start()
+    void OnEnable()
     {
-        fillAmount = 1f;
         currentTime = 0;
+        fillAmount = 0;
     }
 
     void Update()
     {
         currentTime += Time.deltaTime;
-        qteIndicator.fillAmount = fillAmount;
 
         if (Input.GetKeyDown(KeyCode.A))
         {   
-            fillAmount -= decreaseRate;
+            fillAmount += increaseRate;
+            qteIndicator.fillAmount = fillAmount;
         }
 
-        fillAmount += increaseRate;
-        if (fillAmount > 1) fillAmount = 1;
+        fillAmount -= decreaseRate;
+        qteIndicator.fillAmount = fillAmount;
 
-        if (fillAmount <= 0f)
+        if (fillAmount >= 1f)
         {
             ControllerBattle.Log.text = "Attack successful!";
-            Debug.Log("Attack successful!");
 
             qteIndicator.fillAmount = 0;
             
