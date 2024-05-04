@@ -6,66 +6,61 @@ using UnityEngine.UI;
 
 public class A_Smash_QTE_Controller : MonoBehaviour
 {
+    A_Smash_QTE_Controller qteController;
+    
     Controller_Battle ControllerBattle;
+    public float currentTime = 0f;
+    public float timeLimit = 10f;
+    public float fillAmount = 0;
+    public float decreaseRate = 0.05f;
+    public float increaseRate = 0.2f;
 
-    [SerializeField] public Image qteIndicator;
+    public Image qteIndicator;
 
-    void Start()
-    {
-        
+    void Awake()
+    {   
+        ControllerBattle = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
+        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
+        qteIndicator.fillAmount = 0f;
     }
 
-    // Update is called once per frame
+    void OnEnable()
+    {
+        currentTime = 0;
+        fillAmount = 0;
+    }
+
     void Update()
     {
-        
-    }
-    
-    public void SmashQTE() 
-    {
-        Debug.Log("qte mulai!");
-        float timeLimit = 3f; // Adjust the time limit as desired
-        float currentTime = 0f;
-        float fillAmount = 0f;
-        float decreaseRate = 0.2f;
-        float increaseRate = 0.1f;
-        ControllerBattle = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
-        while (currentTime < timeLimit)
-        {
-            Debug.Log("masuk loop while");
-            currentTime += Time.deltaTime;
+        currentTime += Time.deltaTime;
 
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                Debug.Log("mana key A");
-                fillAmount += increaseRate;
-                qteIndicator.fillAmount = fillAmount;
-            }
-            if (currentTime > 0.5f)
-            {
-                currentTime = 0;
-                Debug.Log("berkurang nih");
-                fillAmount -= decreaseRate;
-            }
-
-            fillAmount = Mathf.Clamp01(fillAmount);
+        if (Input.GetKeyDown(KeyCode.A))
+        {   
+            fillAmount += increaseRate;
             qteIndicator.fillAmount = fillAmount;
-
-            if (fillAmount >= 1f)
-            {
-                ControllerBattle.Log.text = "Attack successful!";
-                Debug.Log("Attack successful!");
-                StartCoroutine(ControllerBattle.HeroAttack());
-                qteIndicator.fillAmount = 0f;
-                break;
-            }
         }
 
-        if (fillAmount < 1f)
+        fillAmount -= decreaseRate;
+        qteIndicator.fillAmount = fillAmount;
+
+        if (fillAmount >= 1f)
+        {
+            ControllerBattle.Log.text = "Attack successful!";
+
+            qteIndicator.fillAmount = 0;
+            
+            qteController.enabled = false;
+            StartCoroutine(ControllerBattle.HeroAttack());            
+        }
+
+        if (currentTime >= timeLimit)
         {
             ControllerBattle.Log.text = "Attack missed!";
             Debug.Log("Attack missed!");
-            qteIndicator.fillAmount = 0f;
+
+            qteIndicator.fillAmount = 0;
+
+            qteController.enabled = false;
             ControllerBattle.PassTurn();
         }
     }
