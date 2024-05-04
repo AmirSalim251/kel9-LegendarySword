@@ -16,6 +16,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     public float increaseRate = 0.2f;
 
     public Image qteIndicator;
+    public Image qteButton;
 
     void Awake()
     {   
@@ -28,6 +29,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     {
         currentTime = 0;
         fillAmount = 0;
+        qteButton.enabled = true;
     }
 
     void Update()
@@ -50,6 +52,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
             qteIndicator.fillAmount = 0;
             
             qteController.enabled = false;
+            qteButton.enabled = false;
             StartCoroutine(ControllerBattle.HeroAttack());            
         }
 
@@ -61,6 +64,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
             qteIndicator.fillAmount = 0;
 
             qteController.enabled = false;
+            qteButton.enabled = false;
             ControllerBattle.PassTurn();
         }
     }
