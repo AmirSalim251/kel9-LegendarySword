@@ -25,6 +25,9 @@ public class Controller_Battle : MonoBehaviour
 
     Controller_CharData ActiveTarget;
 
+    A_Smash_QTE_Controller qteController;
+    
+
     public static Controller_CharData player1Unit;
     public static Controller_CharData player2Unit;
     public static Controller_CharData player3Unit;
@@ -40,6 +43,7 @@ public class Controller_Battle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
         StartCoroutine(SetupBattle());
     }
 
@@ -73,7 +77,15 @@ public class Controller_Battle : MonoBehaviour
         PlayerTurn();
     }
 
-    IEnumerator HeroAttack()
+    IEnumerator QTEEvent()
+    {
+        Log.text = "Press 'A' key repeatedly to attack!";
+        Debug.Log("Press 'A' key repeatedly to attack!");
+        qteController.enabled = true;
+        yield return null;
+    }
+
+    public IEnumerator HeroAttack()
     {
         isActionAllowed = false;
 
@@ -169,7 +181,7 @@ public class Controller_Battle : MonoBehaviour
         }*/
     }
 
-    void PassTurn()
+    public void PassTurn()
     {
         if (state == BattleState.PLAYERTURN)
         {
@@ -385,8 +397,16 @@ public class Controller_Battle : MonoBehaviour
     {
         if (!isActionAllowed)
             return;
-
-        StartCoroutine(HeroAttack());
+        if (state == BattleState.PLAYERTURN)
+        {
+            StartCoroutine(QTEEvent());
+            // qteController.enabled = false;
+        }
+        else
+        {
+            StartCoroutine(HeroAttack());
+        }
+        
     }
 
     public void OnBlockButton()

@@ -8,6 +8,8 @@ TagManager:
   - Player 2
   - Player 1
   - Player 3
+  - BattleController
+  - QTEController
   layers:
   - Default
   - TransparentFX
