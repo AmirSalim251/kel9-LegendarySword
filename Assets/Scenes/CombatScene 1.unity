@@ -2373,8 +2373,8 @@ MonoBehaviour:
   currentTime: 0
   timeLimit: 10
   fillAmount: 0
-  decreaseRate: 0.05
-  increaseRate: 0.15
+  decreaseRate: 0.02
+  increaseRate: 0.2
   qteIndicator: {fileID: 2018717988}
   qteButton: {fileID: 1289455498}
 --- !u!1 &855546748
