@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,15 +9,22 @@ public abstract class BaseItem : ScriptableObject
     public string itemDescription;
     public Sprite itemIcon;
 
-    public abstract ItemType GetItemType();
-    public abstract void UseItem();
+    public int itemAmount;
+    public int maxQuantity;
 
+    public abstract ItemType GetItemType();
+    public abstract bool UseItem(Controller_CharData charTarget);
+
+    public static implicit operator BaseItem(Controller_ItemSlot v)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public enum ItemType
 {
-    Materials,
     Consumable,
+    Materials,
     Equipment
 }
 
