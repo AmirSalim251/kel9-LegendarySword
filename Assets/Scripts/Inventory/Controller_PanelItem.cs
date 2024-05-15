@@ -12,13 +12,8 @@ public class Controller_PanelItem : MonoBehaviour
 {
     public Controller_InventoryManager inventoryManager;
     public Controller_TargetItem itemTarget;
-    
-    public Sprite itemAvail;
-    public Sprite itemUnavail;
 
-    public Sprite itemAvailTopRow;
-    public Sprite itemUnavailTopRow;
-
+    public Image panelImage;
     public Image itemImage;
     public Controller_ItemSlot itemSlot;
     public Controller_ItemSlot itemSelected;
@@ -354,6 +349,8 @@ public class Controller_PanelItem : MonoBehaviour
         inventoryManager.RefreshInventory();
 
     }
+
+    
 
 }
 

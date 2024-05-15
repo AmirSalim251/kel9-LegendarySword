@@ -24,6 +24,11 @@ public class Controller_InventoryManager : MonoBehaviour
 
     public GameObject selectedItem;
 
+    public Sprite itemAvail;
+    public Sprite itemUnavail;
+
+    public Sprite itemAvailTopRow;
+    public Sprite itemUnavailTopRow;
 
     private void Awake()
     {
@@ -67,6 +72,7 @@ public class Controller_InventoryManager : MonoBehaviour
                 panel.itemSlot = i;
                 if (i.item != null)
                 {
+                    panel.panelImage.sprite = itemAvailTopRow;
                     panel.itemImage.gameObject.SetActive(true);
                     panel.itemImage.sprite = i.item.itemIcon;
                     panel.itemImage.CrossFadeAlpha(1, 0.05f, true);
@@ -75,6 +81,7 @@ public class Controller_InventoryManager : MonoBehaviour
                     panel.itemText.SetText(i.item.itemName);
 
                     panel.slotType = i.item.GetItemType();
+                    
 
                     if (i.stacks > 1)
                     {
@@ -86,20 +93,23 @@ public class Controller_InventoryManager : MonoBehaviour
                     }
                     else if(i.stacks == 0)
                     {
+                        panel.panelImage.sprite = itemUnavailTopRow;
                         panel.itemText.gameObject.SetActive(false);
                         panel.quantityText.gameObject.SetActive(false);
                         panel.itemImage.sprite = null;
                         panel.itemImage.gameObject.SetActive(false);
                         i.item = null;
+                        
                     }
                 }
 
-                /*if(i.item == null)
+                if (i.item == null)
                 {
+                    panel.panelImage.sprite = itemUnavailTopRow;
                     panel.itemText.gameObject.SetActive(false);
                     panel.quantityText.gameObject.SetActive(false);
-                    *//*panel.itemImage.sprite = null;*//*
-                }*/
+                    panel.itemImage.sprite = null;
+                }
             }
             index++;
         }
