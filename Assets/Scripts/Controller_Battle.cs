@@ -168,7 +168,7 @@ public class Controller_Battle : MonoBehaviour
         Log.text = ActivePlayer.charName + "'s turn!";
         if (state == BattleState.PLAYERTURN)
         {
-            P1UI.transform.position += new Vector3(0, 10f, 0);
+            P1UI.transform.position += new Vector3(0, 40f, 0);
         }
 
     }
@@ -185,17 +185,17 @@ public class Controller_Battle : MonoBehaviour
     {
         if (state == BattleState.PLAYERTURN)
         {
-            P1UI.transform.position -= new Vector3(0, 10f, 0);
+            P1UI.transform.position -= new Vector3(0, 40f, 0);
             if (!player2Unit.isDead)
             {
-                P2UI.transform.position += new Vector3(0, 10f, 0);
+                P2UI.transform.position += new Vector3(0, 40f, 0);
                 state = BattleState.PLAYER2TURN;
                 ActivePlayer = player2Unit;
                 PlayerTurn();
             }
             else
             {
-                P3UI.transform.position += new Vector3(0, 10f, 0);
+                P3UI.transform.position += new Vector3(0, 40f, 0);
                 state = BattleState.PLAYER3TURN;
                 ActivePlayer = player3Unit;
                 PlayerTurn();
@@ -204,10 +204,10 @@ public class Controller_Battle : MonoBehaviour
         }
         else if (state == BattleState.PLAYER2TURN)
         {
-            P2UI.transform.position -= new Vector3(0, 10f, 0);
+            P2UI.transform.position -= new Vector3(0, 40f, 0);
             if (!player3Unit.isDead)
             {
-                P3UI.transform.position += new Vector3(0, 10f, 0);
+                P3UI.transform.position += new Vector3(0, 40f, 0);
                 state = BattleState.PLAYER3TURN;
                 ActivePlayer = player3Unit;
                 PlayerTurn();
@@ -221,7 +221,7 @@ public class Controller_Battle : MonoBehaviour
         }
         else
         {
-            P3UI.transform.position -= new Vector3(0, 10f, 0);
+            P3UI.transform.position -= new Vector3(0, 40f, 0);
             state = BattleState.ENEMYTURN;
             if (player1Unit.isDead)
             {
@@ -319,6 +319,8 @@ public class Controller_Battle : MonoBehaviour
         if (ActiveTarget.isDead)
         {
             ActiveTarget.gameObject.SetActive(false);
+            ActiveTarget.curSP = 0;
+
             int PlayerDead = ActiveTarget.charID;
             int[] UpdatePlayerAlive = PlayerAlive.Where(val => val != PlayerDead).ToArray();
             PlayerAlive = UpdatePlayerAlive;

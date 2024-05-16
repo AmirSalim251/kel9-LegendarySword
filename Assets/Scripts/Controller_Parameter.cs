@@ -16,9 +16,11 @@ public class Controller_Parameter : MonoBehaviour
     public TMP_Text P1TargetItem;
     public Image Player1HealthBar;
     public float Player1HealthAmount;
+    public TMP_Text Player1HealthAmountText;
     public float Player1HealthMax;
     public Image Player1SPBar;
     public float Player1SPAmount;
+    public TMP_Text Player1SPAmountText;
     public float Player1SPMax;
 
     [Space]
@@ -26,9 +28,11 @@ public class Controller_Parameter : MonoBehaviour
     public TMP_Text P2TargetItem;
     public Image Player2HealthBar;
     public float Player2HealthAmount;
+    public TMP_Text Player2HealthAmountText;
     public float Player2HealthMax;
     public Image Player2SPBar;
     public float Player2SPAmount;
+    public TMP_Text Player2SPAmountText;
     public float Player2SPMax;
 
     [Space]
@@ -36,9 +40,11 @@ public class Controller_Parameter : MonoBehaviour
     public TMP_Text P3TargetItem;
     public Image Player3HealthBar;
     public float Player3HealthAmount;
+    public TMP_Text Player3HealthAmountText;
     public float Player3HealthMax;
     public Image Player3SPBar;
     public float Player3SPAmount;
+    public TMP_Text Player3SPAmountText;
     public float Player3SPMax;
 
     // Start is called before the first frame update
@@ -82,6 +88,10 @@ public class Controller_Parameter : MonoBehaviour
         Player2HealthAmount = Controller_Battle.player2Unit.curHP;
         Player3HealthAmount = Controller_Battle.player3Unit.curHP;
 
+        Player1HealthAmountText.SetText(Player1HealthAmount.ToString());
+        Player2HealthAmountText.SetText(Player2HealthAmount.ToString());
+        Player3HealthAmountText.SetText(Player3HealthAmount.ToString());
+
         Player1HealthBar.fillAmount = Player1HealthAmount / Player1HealthMax;
         Player2HealthBar.fillAmount = Player2HealthAmount / Player2HealthMax;
         Player3HealthBar.fillAmount = Player3HealthAmount / Player3HealthMax;
@@ -96,6 +106,10 @@ public class Controller_Parameter : MonoBehaviour
         Player1SPAmount = Controller_Battle.player1Unit.curSP;
         Player2SPAmount = Controller_Battle.player2Unit.curSP;
         Player3SPAmount = Controller_Battle.player3Unit.curSP;
+
+        Player1SPAmountText.SetText(Player1SPAmount.ToString());
+        Player2SPAmountText.SetText(Player2SPAmount.ToString());
+        Player3SPAmountText.SetText(Player3SPAmount.ToString());
 
         Player1SPBar.fillAmount = Player1SPMax / Player1SPAmount;
         Player2SPBar.fillAmount = Player2SPMax / Player2SPAmount;
