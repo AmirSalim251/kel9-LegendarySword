@@ -299,6 +299,8 @@ public class Controller_Battle : MonoBehaviour
 
         if (ActiveTarget.isBlocking == false)
         {
+            ActiveEnemy.animator.SetTrigger("isAttack");
+
             int EnemyDamageOutput = (ActiveEnemy.monsterATK * 4) - (ActiveTarget.charDEF * 2);
             ActiveTarget.isDead = ActiveTarget.TakeDamage(EnemyDamageOutput);
 

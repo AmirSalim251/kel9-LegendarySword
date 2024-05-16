@@ -13,10 +13,13 @@ public class Controller_EnemyData : MonoBehaviour
 
     public int monsterATK;
     public int monsterDEF;
+    
+    public Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
         curHP = baseHP;
     }
 
@@ -28,10 +31,12 @@ public class Controller_EnemyData : MonoBehaviour
 
     public bool TakeDamage(int damage)
     {
+        animator.SetTrigger("isHit");
         curHP -= damage;
 
         if (curHP <= 0)
         {
+            animator.SetTrigger("isDead");
             return true;
         }
         else
