@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 68a3df8efe773544a8c6a80d282dc691
+guid: 6dd01191a2a6b9a47a0a0a56bbb14791
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Trueno
+  - Trade Winds
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

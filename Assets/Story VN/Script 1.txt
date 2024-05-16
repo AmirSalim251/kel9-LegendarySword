@@ -8,7 +8,7 @@ Freya: Let's not discourage him. We have a job to do.
 
 Sword: …
 
-(A rustle in the bushes interrupts their banter, and the group freezes as a werewolf emerges out of his hiding.)
+Narrative: (A rustle in the bushes interrupts their banter, and the group freezes as a werewolf emerges out of his hiding.)
 
 Werewolf: RAWR!!
 
@@ -26,7 +26,7 @@ Sword: …And you too, Alex.
 
 Alex: Yeah, yeah, I know what to do, okay?!
 
-(In battle)
+Narrative: (In battle)
 
 Freya: ...Hold on a moment. This species of wolves isn’t supposed to look like this. I should make a note of it for my research.
 

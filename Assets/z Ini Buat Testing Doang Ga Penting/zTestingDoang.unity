@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 287463216}
   - component: {fileID: 287463215}
   - component: {fileID: 287463217}
+  - component: {fileID: 287463218}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -158,7 +159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 176, y: -45}
+  m_AnchoredPosition: {x: 115, y: -130}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &287463215
@@ -209,7 +210,7 @@ Animator:
   m_GameObject: {fileID: 287463213}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f12f86fb8e1b7ae489bb0086e86f4984, type: 2}
+  m_Controller: {fileID: 9100000, guid: ab30bf4106dfcb64b9275ba77057c642, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -220,6 +221,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &287463218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 287463213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea69fd3d8bce804e99d852c96a72ceb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 287463217}
 --- !u!1 &723869134
 GameObject:
   m_ObjectHideFlags: 0
