@@ -9,18 +9,23 @@ public class DialogueHandler : MonoBehaviour
     public TextAsset textFile;
     public float changeSpeakerDelay;
 
+    public Sprite Alex;
+    public Sprite Freya;
+    public Sprite Magnus;
+    public Sprite Werewolf;
+
+    public GameObject Character;
+
     public TextMeshProUGUI speaker;
     public TextMeshProUGUI sentence;
     public TextMeshProUGUI narrative;
 
-    public Animator animator;
-
+    public Animator DialogueAnimator;
+    
     public GameObject continueText;
 
-    public Animator Alex;
-    public Animator Freya;
-    public Animator Magnus;
-    public Animator Werewolf;
+    private Animator CharacterAnimator;
+    private Image characterImage;
 
     public string[] lines;
 
@@ -32,13 +37,17 @@ public class DialogueHandler : MonoBehaviour
 
     void Start() 
     {
+        CharacterAnimator = Character.GetComponent<Animator>();
+        characterImage = Character.GetComponent<Image>();
+
         speaker.text = string.Empty;
         sentence.text = string.Empty;
         continueText.SetActive(true);
 
         ReadFile();
 
-        SetCharacterImage(speakers[index], true);
+        SetCharacterImage(speakers[index]);
+        CharacterAnimator.Play("Entry");
 
         speaker.text = speakers[index];
         sentence.text = sentences[index];
@@ -88,46 +97,36 @@ public class DialogueHandler : MonoBehaviour
         if (speakers[index] != speakers[index-1]) StartCoroutine(ChangeSpeaker());
         else 
         {
-            animator.SetTrigger("Next Line");
+            DialogueAnimator.Play("Next Line");
             speaker.text = speakers[index];
             sentence.text = sentences[index];
         }
     }   
 
-    void SetCharacterImage(string speaker, bool activate)
+    void SetCharacterImage(string speaker)
     {
-        if (speaker == "Alex") 
-        {
-            if (activate == true) Alex.SetTrigger("Entry");
-            else Alex.SetTrigger("Exit");
-        }
-        else if (speaker == "Freya")
-        {
-            if (activate == true) Freya.SetTrigger("Entry");
-            else Freya.SetTrigger("Exit");
-        }
-        else if (speaker == "Magnus")
-        {
-            if (activate == true) Magnus.SetTrigger("Entry");
-            else Magnus.SetTrigger("Exit");
-        }
-        else if (speaker == "Werewolf")
-        {
-            if (activate == true) Werewolf.Play("Entry");
-            else Werewolf.Play("Exit");
-        }
+        characterImage.enabled = true;
+
+        if (speaker == "Alex") characterImage.sprite = Alex;
+
+        else if (speaker == "Freya") characterImage.sprite = Freya;
+
+        else if (speaker == "Magnus") characterImage.sprite = Magnus;
+
+        else if (speaker == "Werewolf") characterImage.sprite = Werewolf;
+
+        else characterImage.enabled = false;
     }
 
     IEnumerator ChangeSpeaker()
     {
         changingSpeaker = true;
 
-        if (index > 0 && speakers[index-1] != "Narrative")
-        {
-            SetCharacterImage(speakers[index-1], false);
-            animator.SetTrigger("Exit");
-        }
-        else animator.Play("Narrative Exit");
+        if (speakers[index-1] != "Werewolf") CharacterAnimator.Play("Exit");
+        else CharacterAnimator.Play("Werewolf Exit");
+
+        if (index > 0 && speakers[index-1] != "Narrative") DialogueAnimator.Play("Exit");
+        else DialogueAnimator.Play("Narrative Exit");
 
         continueText.SetActive(false);
 
@@ -137,13 +136,17 @@ public class DialogueHandler : MonoBehaviour
         {
             speaker.text = speakers[index];
             sentence.text = sentences[index];
-            SetCharacterImage(speakers[index], true);
-            animator.SetTrigger("Entry");
+            SetCharacterImage(speakers[index]);
+
+            if (speakers[index] != "Werewolf") CharacterAnimator.Play("Entry");
+            else CharacterAnimator.Play("Werewolf Entry");
+
+            DialogueAnimator.Play("Entry");
         }
         else 
         {
             narrative.text = sentences[index];
-            animator.Play("Narrative Entry"); 
+            DialogueAnimator.Play("Narrative Entry"); 
         }
         
         continueText.SetActive(true);   
@@ -153,8 +156,8 @@ public class DialogueHandler : MonoBehaviour
 
     IEnumerator EndDialogue()
     {
-        SetCharacterImage(speakers[index-1], false);
-        animator.SetTrigger("Exit");
+        CharacterAnimator.Play("Exit");
+        DialogueAnimator.Play("Exit");
 
         yield return new WaitForSeconds(changeSpeakerDelay);
 
@@ -170,15 +173,19 @@ public class DialogueHandler : MonoBehaviour
         {
             speaker.text = speakers[index];
             sentence.text = sentences[index];
+            SetCharacterImage(speakers[index]);
 
-            SetCharacterImage(speakers[index], true);
-            animator.SetTrigger("Entry");
+            if (speakers[index] != "Werewolf") CharacterAnimator.Play("Entry");
+            else CharacterAnimator.Play("Werewolf Entry");
+
+            DialogueAnimator.Play("Entry");
+
             continueText.SetActive(true);
         }
         else
         {
             narrative.text = sentences[index];
-            animator.Play("Narrative Entry");
+            DialogueAnimator.Play("Narrative Entry");
         }
     }
 }
