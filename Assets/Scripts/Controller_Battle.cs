@@ -26,6 +26,7 @@ public class Controller_Battle : MonoBehaviour
     Controller_CharData ActiveTarget;
 
     A_Smash_QTE_Controller qteController;
+    Controller_RT rtController;
     
 
     public static Controller_CharData player1Unit;
@@ -39,11 +40,14 @@ public class Controller_Battle : MonoBehaviour
     public BattleState state;
 
     bool isActionAllowed;
+    public bool qteCheck;
 
     // Start is called before the first frame update
     void Start()
     {
         qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
+        rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
+        qteCheck = false;
         StartCoroutine(SetupBattle());
     }
 
@@ -82,6 +86,13 @@ public class Controller_Battle : MonoBehaviour
         Log.text = "Press 'A' key repeatedly to attack!";
         Debug.Log("Press 'A' key repeatedly to attack!");
         qteController.enabled = true;
+        yield return null;
+    }
+
+    public IEnumerator RTTime()
+    {
+        Debug.Log("Its real-time time!");
+        rtController.enabled = true;
         yield return null;
     }
 
