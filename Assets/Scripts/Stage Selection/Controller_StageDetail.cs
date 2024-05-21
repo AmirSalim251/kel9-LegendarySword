@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 public class Controller_StageDetail : MonoBehaviour
@@ -38,4 +39,11 @@ public class Controller_StageDetail : MonoBehaviour
     {
         detailPanel.SetActive(false);
     }
+
+    public void EnterButton()
+    {
+        SceneManager.LoadScene("VN Scene");
+    }
+
+
 }

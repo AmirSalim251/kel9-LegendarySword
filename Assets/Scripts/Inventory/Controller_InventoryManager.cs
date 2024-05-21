@@ -4,7 +4,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using static UnityEditor.Progress;
 
 public class Controller_InventoryManager : MonoBehaviour
 {
