@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
             targetPosition.y = mainCam.transform.position.y;
 
             // Adjust the X position to be closer to the character
-            targetPosition.x = Mathf.Lerp(mainCam.transform.position.x, target.position.x, 0.8f);
+            targetPosition.x = Mathf.Lerp(mainCam.transform.position.x, target.position.x, 1f);
 
             mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPosition, followSpeed * Time.deltaTime);
         }
