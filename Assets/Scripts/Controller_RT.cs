@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public class Controller_RT : MonoBehaviour
@@ -13,14 +14,15 @@ public class Controller_RT : MonoBehaviour
 
    void Start()
    {
-      mainCam = GameObject.FindGameObjectWithTag("CameraController").GetComponent<CameraController>();
+      // mainCam = GameObject.FindGameObjectWithTag("CameraController").GetComponent<CameraController>();
    }
     
    public void OnEnable()
    {
       bar.SetActive(true);
       scrController.SetActive(true);
-      mainCam.enabled = true;
-      mainCam.FollowTarget(targetTransform,5);
+      GameObject.Find("RTCam").GetComponent<CinemachineVirtualCamera>().enabled = true;
+      // mainCam.enabled = true;
+      // mainCam.FollowTarget(targetTransform,5);
    }
 }

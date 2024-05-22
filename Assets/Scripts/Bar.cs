@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class Bar : MonoBehaviour
 {
@@ -44,19 +45,24 @@ public class Bar : MonoBehaviour
 
             if (fillAmount <= 0)
             {
-                OnBarDepleted();
+                StartCoroutine(OnBarDepleted());
             }
         }
     }
 
-    void OnBarDepleted()
+    IEnumerator OnBarDepleted()
     {
+        // mainCam.GoBackToDefault(); 
+        GameObject.Find("RTCam").GetComponent<CinemachineVirtualCamera>().enabled = false;
+
         // Deactivate character controller
         scrController.SetActive(false);
-        mainCam.GoBackToDefault();
+
+        yield return new WaitForSeconds(2);
+
         bg.SetActive(false);
         rtController.enabled = false;
-
+        
         // Reset cube position and rotation
         ResetCubePosition();
         ControllerBattle.PassTurn();
@@ -68,9 +74,7 @@ public class Bar : MonoBehaviour
 
     void ResetCubePosition()
     {
-        cubeRigidbody.constraints = RigidbodyConstraints.None; // Remove constraints temporarily
         cube.transform.position = cubeInitialPosition;
         cube.transform.rotation = cubeInitialRotation;
-        cubeRigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation; // Apply constraints
     }
 }
