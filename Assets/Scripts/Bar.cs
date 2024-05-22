@@ -22,7 +22,6 @@ public class Bar : MonoBehaviour
     private Quaternion cubeInitialRotation;
     private Rigidbody cubeRigidbody;
 
-    // Start is called before the first frame update
     void Start()
     {
         rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
@@ -35,7 +34,6 @@ public class Bar : MonoBehaviour
         cubeRigidbody = cube.GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (fillAmount > 0)
@@ -52,13 +50,10 @@ public class Bar : MonoBehaviour
 
     IEnumerator OnBarDepleted()
     {
-        // mainCam.GoBackToDefault(); 
-        GameObject.Find("RTCam").GetComponent<CinemachineVirtualCamera>().enabled = false;
-
         // Deactivate character controller
         scrController.SetActive(false);
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.25f);
 
         bg.SetActive(false);
         rtController.enabled = false;
