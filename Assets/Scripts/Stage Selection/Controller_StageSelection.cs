@@ -5,6 +5,7 @@ using UnityEngine;
 public class Controller_StageSelection : MonoBehaviour
 {
     public GameObject playerSprite;
+    private Animator animator;
 
     public GameObject btnStageZero;
     public GameObject btnStage1;
@@ -14,6 +15,7 @@ public class Controller_StageSelection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        animator = playerSprite.GetComponent<Animator>();
         activeStage = btnStageZero;
     }
 
@@ -33,7 +35,9 @@ public class Controller_StageSelection : MonoBehaviour
 
     public void MovePlayerPosition(GameObject nextStage)
     {
-        playerSprite.transform.position = GetPlayerDelta() + nextStage.transform.position;
-        GetPlayerDelta();
+        // playerSprite.transform.position = GetPlayerDelta() + nextStage.transform.position;
+        // GetPlayerDelta();
+        if (nextStage.name == "Stage 1") animator.Play("Go To Stage");
+        else if (nextStage.name == "Stage Zero") animator.Play("Go To Home");
     }
 }
