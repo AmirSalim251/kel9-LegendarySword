@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class Controller_CharData : MonoBehaviour
 {
     public static Model_CharData charData1 = new Model_CharData();
@@ -29,7 +27,8 @@ public class Controller_CharData : MonoBehaviour
     public bool isBlocking = false;
     int DefChance;
 
-    // Start is called before the first frame update
+    public Animator panelAnimator;
+
     void Start()
     {
         /* if(charID == 1)
@@ -51,12 +50,6 @@ public class Controller_CharData : MonoBehaviour
         curSP = baseSP;
 
         SetCharData(charData1);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void GetCharData()
@@ -95,6 +88,9 @@ public class Controller_CharData : MonoBehaviour
 
     public bool TakeDamage(int damage)
     {
+        VFX.instance.Create(transform.position, damage.ToString(), charName);
+        panelAnimator.Play("On Hit");
+
         curHP -= damage;
 
         if(curHP <= 0)

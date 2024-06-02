@@ -3,19 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum BattleState { START, PLAYERTURN, PLAYER2TURN, PLAYER3TURN, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYER1TURN, PLAYER2TURN, PLAYER3TURN, ENEMYTURN, WON, LOST }
 
 public class Controller_Battle : MonoBehaviour
 {
     public TMP_Text Log;
 
-    public GameObject P1UI;
-    public GameObject P2UI;
-    public GameObject P3UI;
+    public PlayerPanel P1UI;
+    public PlayerPanel P2UI;
+    public PlayerPanel P3UI;
 
     int turnCount;
     public TMP_Text turnCounter;
@@ -27,13 +28,10 @@ public class Controller_Battle : MonoBehaviour
 
     A_Smash_QTE_Controller qteController;
     Controller_RT rtController;
-    
 
     public static Controller_CharData player1Unit;
     public static Controller_CharData player2Unit;
     public static Controller_CharData player3Unit;
-
-    public int[] PlayerAlive = {1,2,3,4};
 
     public static Controller_EnemyData enemyUnit;
 
@@ -41,8 +39,8 @@ public class Controller_Battle : MonoBehaviour
 
     bool isActionAllowed;
     public bool qteCheck;
+    public Animator enemyPanelAnimator;
 
-    // Start is called before the first frame update
     void Start()
     {
         qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
@@ -51,11 +49,9 @@ public class Controller_Battle : MonoBehaviour
         StartCoroutine(SetupBattle());
     }
 
-    // Update is called once per frame
     void Update()
     {
         turnCounter.SetText(turnCount.ToString());
-        CheckTurn();
     }
     IEnumerator SetupBattle()
     {
@@ -63,12 +59,9 @@ public class Controller_Battle : MonoBehaviour
         player2Unit = GameObject.FindGameObjectWithTag("Player 2").GetComponent<Controller_CharData>();
         player3Unit = GameObject.FindGameObjectWithTag("Player 3").GetComponent<Controller_CharData>();
 
-        /*yield return new WaitForSeconds(1f);*/
-
         enemyUnit = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();
 
         ActivePlayer = player1Unit;
-        /*ActiveEnemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();*/
         ActiveEnemy = enemyUnit;
 
         yield return new WaitForSeconds(1f);
@@ -77,12 +70,13 @@ public class Controller_Battle : MonoBehaviour
         Log.text = "Game Start";
 
         turnCount = 0;
-        state = BattleState.PLAYERTURN;
-        PlayerTurn();
+        state = BattleState.ENEMYTURN;
+        PassTurn();
     }
 
     IEnumerator QTEEvent()
     {
+        isActionAllowed = false;
         Log.text = "Press 'A' key repeatedly to attack!";
         Debug.Log("Press 'A' key repeatedly to attack!");
         qteController.enabled = true;
@@ -96,33 +90,26 @@ public class Controller_Battle : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator HeroAttack()
+    public IEnumerator PlayerAttack()
     {
         isActionAllowed = false;
-
-        yield return new WaitForSeconds(2f);
-        
-        int HeroDamageOutput = 0;
-        HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
-        /*ActiveEnemy.GetComponent<Controller_EnemyData>().curHP -= HeroDamageOutput;*/
-
-        bool isDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
-
         Log.text = ActivePlayer.charName + " is attacking!";
 
         yield return new WaitForSeconds(1f);
-        if (ActiveEnemy.baseHP != ActiveEnemy.curHP)
-        {
-            Debug.Log("Attack berhasil");
-            Debug.Log("Damage dihasilkan: " + HeroDamageOutput);
-            Debug.Log("Sisa HP " + ActiveEnemy.monsterName + ": " + ActiveEnemy.curHP);
-        }
-        else
-        {
-            Debug.Log("Attack gagal");
-        }
 
-        if (isDead)
+        enemyPanelAnimator.SetTrigger("On Hit");
+        
+        int HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+        bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+
+        Debug.Log("Attack berhasil");
+        Debug.Log("Damage dihasilkan: " + HeroDamageOutput);
+        Debug.Log("Sisa HP " + ActiveEnemy.monsterName + ": " + ActiveEnemy.curHP);
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+
+        if (enemyIsDead)
         {
             state = BattleState.WON;
             StartCoroutine(EndBattle());
@@ -133,7 +120,7 @@ public class Controller_Battle : MonoBehaviour
         }
     }
 
-    IEnumerator HeroDefend()
+    IEnumerator PlayerDefend()
     {
         isActionAllowed = false;
         Log.text = ActivePlayer.charName + " is trying to block!";
@@ -141,30 +128,8 @@ public class Controller_Battle : MonoBehaviour
         yield return new WaitForSeconds(1f);
         
         ActivePlayer.Blocking();
-
-        /*if (state == BattleState.PLAYERTURN)
-        {
-            state = BattleState.PLAYER2TURN;
-            ActivePlayer = player2Unit;
-            PlayerTurn();
-        }
-        else if (state == BattleState.PLAYER2TURN)
-        {
-            state = BattleState.PLAYER3TURN;
-            ActivePlayer = player3Unit;
-            PlayerTurn();
-        }
-        else
-        {
-            state = BattleState.ENEMYTURN;
-            ActivePlayer = player1Unit;
-            StartCoroutine(EnemyTurn());
-        }*/
-
         PassTurn();
-
         yield return new WaitForSeconds(1f);
-
     }
 
     public void HeroBlunder()
@@ -177,48 +142,24 @@ public class Controller_Battle : MonoBehaviour
         isActionAllowed = true;
         Debug.Log("Turn: " + ActivePlayer.charName);
         Log.text = ActivePlayer.charName + "'s turn!";
-        if (state == BattleState.PLAYERTURN)
-        {
-            P1UI.transform.position += new Vector3(0, 40f, 0);
-        }
-
-    }
-
-    void CheckTurn()
-    {
-        /*if (state == BattleState.PLAYERTURN)
-        {
-            P1UI.transform.position += new Vector3(0, 5f, 0);
-        }*/
     }
 
     public void PassTurn()
     {
-        if (state == BattleState.PLAYERTURN)
+        if (state == BattleState.PLAYER1TURN)
         {
-            P1UI.transform.position -= new Vector3(0, 40f, 0);
+            P1UI.MoveDown();
+
             if (!player2Unit.isDead)
             {
-                P2UI.transform.position += new Vector3(0, 40f, 0);
+                P2UI.MoveUp();
                 state = BattleState.PLAYER2TURN;
                 ActivePlayer = player2Unit;
                 PlayerTurn();
             }
-            else
+            else if (!player3Unit.isDead)
             {
-                P3UI.transform.position += new Vector3(0, 40f, 0);
-                state = BattleState.PLAYER3TURN;
-                ActivePlayer = player3Unit;
-                PlayerTurn();
-            }
-
-        }
-        else if (state == BattleState.PLAYER2TURN)
-        {
-            P2UI.transform.position -= new Vector3(0, 40f, 0);
-            if (!player3Unit.isDead)
-            {
-                P3UI.transform.position += new Vector3(0, 40f, 0);
+                P3UI.MoveUp();
                 state = BattleState.PLAYER3TURN;
                 ActivePlayer = player3Unit;
                 PlayerTurn();
@@ -226,27 +167,57 @@ public class Controller_Battle : MonoBehaviour
             else
             {
                 state = BattleState.ENEMYTURN;
-                ActivePlayer = player1Unit;
                 StartCoroutine(EnemyTurn());
             }
         }
-        else
+        
+        else if (state == BattleState.PLAYER2TURN)
         {
-            P3UI.transform.position -= new Vector3(0, 40f, 0);
-            state = BattleState.ENEMYTURN;
-            if (player1Unit.isDead)
+            P2UI.MoveDown();
+
+            if (!player3Unit.isDead)
             {
-                ActivePlayer = player2Unit;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                }
+                P3UI.MoveUp();
+                state = BattleState.PLAYER3TURN;
+                ActivePlayer = player3Unit;
+                PlayerTurn();
             }
             else
             {
+                state = BattleState.ENEMYTURN;
+                StartCoroutine(EnemyTurn());
+            }
+        }
+
+        else if (state == BattleState.PLAYER3TURN)
+        {
+            P3UI.MoveDown();
+
+            state = BattleState.ENEMYTURN;
+            StartCoroutine(EnemyTurn());
+        }
+        
+        else if (state == BattleState.ENEMYTURN)
+        {
+            if (!player1Unit.isDead) 
+            {
+                P1UI.MoveUp();
+                state = BattleState.PLAYER1TURN;
                 ActivePlayer = player1Unit;
             }
-            StartCoroutine(EnemyTurn());
+            else if (!player2Unit.isDead) 
+            {
+                P2UI.MoveUp();
+                state = BattleState.PLAYER2TURN;
+                ActivePlayer = player2Unit;
+            }
+            else if (!player3Unit.isDead) 
+            {
+                P3UI.MoveUp();
+                state = BattleState.PLAYER3TURN;
+                ActivePlayer = player3Unit;
+            }
+            PlayerTurn();
         }
     }
 
@@ -254,63 +225,49 @@ public class Controller_Battle : MonoBehaviour
     {
         Log.text = "Enemy's turn!";
 
-        isActionAllowed = false;
-
         yield return new WaitForSeconds(1f);
 
-        /*int RandomTarget = UnityEngine.Random.Range(1, 4);*/
-        /*int RandomTarget = UnityEngine.Random.Range(PlayerAlive.Min(), PlayerAlive.Max());
-
-        if (RandomTarget == 1)
+        //Randomizing target for enemy to attack
+        while (true)
         {
-            if(player1Unit.isDead)
+            int RandomTargetIndex = UnityEngine.Random.Range(0, 3);
+            RandomTargetIndex++;
+            Debug.Log(RandomTargetIndex);
+
+            if (RandomTargetIndex == 1)
             {
-                RandomTarget = UnityEngine.Random.Range(2, 4);
-                if (RandomTarget == 2)
+                if (!player1Unit.isDead)
                 {
-                    ActiveTarget = player2Unit;
-                }
-                else if (RandomTarget == 3)
-                {
-                    ActiveTarget = player3Unit;
+                    ActiveTarget = player1Unit;
+                    break;
                 }
             }
-            ActiveTarget = player1Unit;
+            else if (RandomTargetIndex == 2)
+            {
+                if (!player2Unit.isDead)
+                {
+                    ActiveTarget = player2Unit;
+                    break;
+                }
+            }
+            else if (RandomTargetIndex == 3)
+            {
+                if (!player3Unit.isDead)
+                {
+                    ActiveTarget = player3Unit;
+                    break;
+                }
+            }
         }
-        else if (RandomTarget == 2)
-        {
-            ActiveTarget = player2Unit;
-        }
-        else if (RandomTarget == 3)
-        {
-            ActiveTarget = player3Unit;
-        }*/
-
-        int RandomTargetIndex = UnityEngine.Random.Range(0, PlayerAlive.Length-1);
-        int RandomTargetVal = PlayerAlive[RandomTargetIndex];
-
-        Debug.Log(RandomTargetVal);
-
-        if (RandomTargetVal == 1)
-        {
-            ActiveTarget = player1Unit;
-        }
-        else if (RandomTargetVal == 2)
-        {
-            ActiveTarget = player2Unit;
-        }
-        else if (RandomTargetVal == 3)
-        {
-            ActiveTarget = player3Unit;
-        }
-
-
-        Debug.Log("Enemy targetted: " + ActiveTarget.charName);
+        
         Log.text = "Enemy is attacking " + ActiveTarget.charName;
 
         if (ActiveTarget.isBlocking == false)
         {
             ActiveEnemy.animator.SetTrigger("isAttack");
+
+            // Wait for the attack animation
+            yield return new WaitForSeconds(0.85f);
 
             int EnemyDamageOutput = (ActiveEnemy.monsterATK * 4) - (ActiveTarget.charDEF * 2);
             ActiveTarget.isDead = ActiveTarget.TakeDamage(EnemyDamageOutput);
@@ -324,70 +281,24 @@ public class Controller_Battle : MonoBehaviour
             Debug.Log("Attack dihentikan");
             Log.text = ActiveTarget.charName + " blocked enemy's attack!";
         }
-        
-        /*playerHUD.SetHP(playerUnit.currentHP);*/
 
-        yield return new WaitForSeconds(1f);
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
 
         if (ActiveTarget.isDead)
         {
-            ActiveTarget.gameObject.SetActive(false);
-            ActiveTarget.curSP = 0;
+            Remove(ActiveTarget);
 
             int PlayerDead = ActiveTarget.charID;
-            int[] UpdatePlayerAlive = PlayerAlive.Where(val => val != PlayerDead).ToArray();
-            PlayerAlive = UpdatePlayerAlive;
             
             if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
             {
                 state = BattleState.LOST;
                 EndBattle();
             }
-            else
-            {
-                if (player1Unit.isDead)
-            {
-                ActivePlayer = player2Unit;
-                state = BattleState.PLAYER2TURN;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                    state = BattleState.PLAYER3TURN;
-                }
-            }
-            else
-            {
-                ActivePlayer = player1Unit;
-                state = BattleState.PLAYERTURN;
-
-            }
-                PlayerTurn();
-            }
-            
         }
-        else
-        {
-            if (player1Unit.isDead)
-            {
-                ActivePlayer = player2Unit;
-                state = BattleState.PLAYER2TURN;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                    state = BattleState.PLAYER3TURN;
-                }
-            }
-            else
-            {
-                ActivePlayer = player1Unit;
-                state = BattleState.PLAYERTURN;
-
-            }
-            PlayerTurn();
-        }
+        PassTurn();
         turnCount++;
-
-
     }
 
     IEnumerator EndBattle()
@@ -412,24 +323,31 @@ public class Controller_Battle : MonoBehaviour
     {
         if (!isActionAllowed)
             return;
-        if (state == BattleState.PLAYERTURN)
+        if (state == BattleState.PLAYER1TURN)
         {
             StartCoroutine(QTEEvent());
-            // qteController.enabled = false;
         }
         else
         {
-            StartCoroutine(HeroAttack());
-        }
-        
+            StartCoroutine(PlayerAttack());
+        }        
     }
 
     public void OnBlockButton()
     {
         if (!isActionAllowed)
             return;
-        StartCoroutine(HeroDefend());
+        StartCoroutine(PlayerDefend());
     }
 
-    
+    void Remove(Controller_CharData Character)
+    {
+        ActiveTarget.gameObject.SetActive(false);
+        ActiveTarget.curSP = 0;
+
+        if (Character.charName == "Alex") P1UI.Die();
+        else if (Character.charName == "Freya") P2UI.Die();
+        else if (Character.charName == "Magnus") P3UI.Die();
+        
+    }
 }

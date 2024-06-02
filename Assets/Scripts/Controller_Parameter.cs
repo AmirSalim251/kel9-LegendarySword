@@ -47,13 +47,11 @@ public class Controller_Parameter : MonoBehaviour
     public TMP_Text Player3SPAmountText;
     public float Player3SPMax;
 
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         GetPlayerName();
@@ -63,8 +61,6 @@ public class Controller_Parameter : MonoBehaviour
         GetEnemyName();
         GetEnemyHealth();
     }
-
-
 
     void GetEnemyName()
     {
@@ -111,9 +107,9 @@ public class Controller_Parameter : MonoBehaviour
         Player2SPAmountText.SetText(Player2SPAmount.ToString());
         Player3SPAmountText.SetText(Player3SPAmount.ToString());
 
-        Player1SPBar.fillAmount = Player1SPMax / Player1SPAmount;
-        Player2SPBar.fillAmount = Player2SPMax / Player2SPAmount;
-        Player3SPBar.fillAmount = Player3SPMax / Player3SPAmount;
+        Player1SPBar.fillAmount = Player1SPAmount / Player1SPMax;
+        Player2SPBar.fillAmount = Player2SPAmount / Player2SPMax;
+        Player3SPBar.fillAmount = Player3SPAmount / Player3SPMax;
     }
 
     void GetPlayerName()

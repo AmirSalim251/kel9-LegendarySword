@@ -16,22 +16,17 @@ public class Controller_EnemyData : MonoBehaviour
     
     public Animator animator;
 
-    // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
         curHP = baseHP;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public bool TakeDamage(int damage)
     {
+        VFX.instance.Create(transform.position, damage.ToString(), monsterName);
         animator.SetTrigger("isHit");
+
         curHP -= damage;
 
         if (curHP <= 0)
@@ -44,6 +39,4 @@ public class Controller_EnemyData : MonoBehaviour
             return false;
         }
     }
-
-
 }

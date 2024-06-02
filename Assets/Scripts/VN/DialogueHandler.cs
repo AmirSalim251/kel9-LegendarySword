@@ -30,10 +30,12 @@ public class DialogueHandler : MonoBehaviour
 
     public string[] lines;
 
+    public bool isDialogueOver = false;
+
     List<string> speakers = new List<string>();
     List<string> sentences = new List<string>();
     
-    private int index = 0;
+    public int index = 0;
     private bool changingSpeaker = false;
 
     void Start() 
@@ -155,19 +157,6 @@ public class DialogueHandler : MonoBehaviour
         changingSpeaker = false;
     }
 
-    IEnumerator EndDialogue()
-    {
-        continueText.SetActive(false);
-
-        CharacterAnimator.Play("Exit");
-        DialogueAnimator.Play("Exit");
-
-        yield return new WaitForSeconds(changeSpeakerDelay);
-
-        SceneManager.LoadScene("CombatScene 3");
-
-    }
-
     void ClickedWhenChangingSpeaker()
     {
         StopAllCoroutines();
@@ -191,5 +180,20 @@ public class DialogueHandler : MonoBehaviour
             narrative.text = sentences[index];
             DialogueAnimator.Play("Narrative Entry");
         }
+    }
+
+    IEnumerator EndDialogue()
+    {
+        continueText.SetActive(false);
+
+        CharacterAnimator.Play("Exit");
+        DialogueAnimator.Play("Exit");
+
+        yield return new WaitForSeconds(changeSpeakerDelay);
+
+        isDialogueOver = true;
+
+        if(SceneManager.GetActiveScene().name == "VN Scene") 
+            SceneManager.LoadScene("CombatScene 3");
     }
 }

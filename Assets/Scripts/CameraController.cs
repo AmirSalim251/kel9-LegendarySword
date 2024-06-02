@@ -15,10 +15,10 @@ public class CameraController : MonoBehaviour
     {
         if(currentState == battleController.state) return;
 
-        if (battleController.state == BattleState.PLAYERTURN)
+        if (battleController.state == BattleState.PLAYER1TURN)
         {
             targetCamera = GameObject.Find("AlexCam").GetComponent<CinemachineVirtualCamera>();
-            currentState = BattleState.PLAYERTURN;
+            currentState = BattleState.PLAYER1TURN;
         }
 
         else if (battleController.state == BattleState.PLAYER2TURN)
