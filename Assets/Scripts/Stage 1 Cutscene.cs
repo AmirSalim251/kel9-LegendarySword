@@ -13,7 +13,7 @@ public class Stage1Cutscene : MonoBehaviour
 
     public List<CinemachineVirtualCamera> VirtualCameras;
     
-    void Start()
+    void Awake()
     {
         CombatUI.SetActive(false);
         CameraController.SetActive(false);
@@ -27,12 +27,14 @@ public class Stage1Cutscene : MonoBehaviour
             EndCutsene();
 
         if (dialogueHandler.index == 4)
-            VirtualCameras[1].enabled = true;
+            VirtualCameras[2].enabled = true;
     }
 
     IEnumerator Intro()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(0.5f);
+        VirtualCameras[1].enabled = true;
+        yield return new WaitForSeconds(1.5f);
         DialogueCanvas.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         DialogueCanvas.GetComponent<CanvasGroup>().alpha = 1;
@@ -44,6 +46,6 @@ public class Stage1Cutscene : MonoBehaviour
         CameraController.SetActive(true);
         CombatCamera.SetActive(true);
         
-        Destroy(this, 1);
+        Destroy(gameObject, 5);
     }
 }

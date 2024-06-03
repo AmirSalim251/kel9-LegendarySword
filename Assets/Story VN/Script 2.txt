@@ -1,13 +1,13 @@
-Freya: ...Hold on a moment. This species of wolves isn’t supposed to look like this. I should make a note of it for my research.
+Freya(Open): ...Hold on a moment. This species of wolves isn’t supposed to look like this. I should make a note of it for my research.
 
-Magnus: Alas, I must concur. This... abomination appears most unpalatable. But in the face of scarcity, one must embrace the creed: waste not, want not.
+Magnus(Normal): Alas, I must concur. This... abomination appears most unpalatable. But in the face of scarcity, one must embrace the creed: waste not, want not.
 
-Sword: OH, THESE LAZY DEVS!! 
+Sword(CloseEyes): OH, THESE LAZY DEVS!! 
 
-Sword: Honestly, Magnus, Freya, stop overanalyzing and look at yourselves!
+Sword(Serious): Honestly, Magnus, Freya, stop overanalyzing and look at yourselves!
 
-Magnus: Why am I shaped like this? I can't even feel the ingredients in my pocket. Is this some cursed fate befallen upon me?
+Magnus(Angry): Why am I shaped like this? I can't even feel the ingredients in my pocket. Is this some cursed fate befallen upon me?
 
-Freya: If they could create decent 2D sprites, why not invest in making us all in 3D? Such unreliable developers…
+Freya(Angry): If they could create decent 2D sprites, why not invest in making us all in 3D? Such unreliable developers…
 
-Sword: Hello, there's still a werewolf right in front of us. Back to battle, please.
+Sword(Surprised): Hello, there's still a werewolf right in front of us. Back to battle, please.

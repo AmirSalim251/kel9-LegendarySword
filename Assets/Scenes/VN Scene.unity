@@ -465,9 +465,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2365724166940064523, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 860701225
+      objectReference: {fileID: 0}
+    - target: {fileID: 4248334541482986245, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 5063465
+      objectReference: {fileID: 0}
     - target: {fileID: 5716326877447364858, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
       propertyPath: m_Name
       value: Dialogue Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410449685402283543, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: bc71638c60d2eb94db695afa31a86385, type: 3}
+    - target: {fileID: 6906015762801288076, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185244480756776710, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 5063465
       objectReference: {fileID: 0}
     - target: {fileID: 8736341146298206017, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
       propertyPath: m_Pivot.x
@@ -548,6 +568,10 @@ PrefabInstance:
     - target: {fileID: 8736341146298206017, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8912546647767156621, guid: 12b74247d720a504eb754c2d683ecf0c, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 12312319
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

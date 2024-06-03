@@ -4,15 +4,29 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 public class DialogueHandler : MonoBehaviour
 {
     public TextAsset textFile;
+
+    [Space]
     public float changeSpeakerDelay;
 
-    public Sprite Alex;
-    public Sprite Freya;
-    public Sprite Magnus;
+    public Sprite Alex_Normal;
+    public Sprite Alex_Sad;
+    public Sprite Alex_Happy;
+    public Sprite Freya_Normal;
+    public Sprite Freya_Angry;
+    public Sprite Freya_Open;
+    public Sprite Magnus_Normal;
+    public Sprite Magnus_Angry;
+    public Sprite Magnus_Happy;
+    public Sprite Sword_Normal;
+    public Sprite Sword_CloseEyes;
+    public Sprite Sword_Surprised;
+    public Sprite Sword_Serious;
+    public Sprite Sword_Confused;
     public Sprite Werewolf;
 
     public GameObject Character;
@@ -32,11 +46,13 @@ public class DialogueHandler : MonoBehaviour
 
     public bool isDialogueOver = false;
 
-    List<string> speakers = new List<string>();
-    List<string> sentences = new List<string>();
+    public List<string> speakers = new List<string>();
+    public List<string> sentences = new List<string>();
+    public List<string> expression = new List<string>();
     
     public int index = 0;
-    private bool changingSpeaker = false;
+    private bool isNarrative;
+    private bool isChangingSpeaker = false;
 
     void Start() 
     {
@@ -49,7 +65,7 @@ public class DialogueHandler : MonoBehaviour
 
         ReadFile();
 
-        SetCharacterImage(speakers[index]);
+        SetCharacterImage(speakers[index], expression[index]);
         CharacterAnimator.Play("Entry");
 
         speaker.text = speakers[index];
@@ -60,7 +76,7 @@ public class DialogueHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0)) 
         {
-           if (changingSpeaker) ClickedWhenChangingSpeaker();
+           if (isChangingSpeaker) ClickedWhenChangingSpeaker();
            else NextLine();
         }
     }
@@ -69,21 +85,24 @@ public class DialogueHandler : MonoBehaviour
         lines = textFile.text.Split("\n\r\n");
         foreach (string line in lines)
         {
-            int idx =  line.IndexOf(":");
-            string _speaker;
-            string _sentence;
+            int idx =  line.IndexOf("(");
+            int idx2 = line.IndexOf(")");
+            string _speaker = "";
+            string _sentence = "";
+            string _expression = "";
             
-            if (idx != -1)  _speaker = line.Substring(0, idx);
-            else 
-            {
-                _speaker = "";
-                idx = -2;
-            }
+            isNarrative = idx == 0;
 
-            _sentence = line.Substring(idx + 2);
+            if (isNarrative) _sentence = line;
+            else {
+                _speaker = line.Substring(0, idx);
+                _expression = line.Substring(idx+1, idx2-idx-1);
+                _sentence = line.Substring(idx2+3);
+            }
 
             speakers.Add(_speaker);
             sentences.Add(_sentence);
+            expression.Add(_expression);
         }
     }
 
@@ -103,18 +122,43 @@ public class DialogueHandler : MonoBehaviour
             DialogueAnimator.Play("Next Line");
             speaker.text = speakers[index];
             sentence.text = sentences[index];
+            SetCharacterImage(speakers[index], expression[index]);
         }
     }   
 
-    void SetCharacterImage(string speaker)
+    void SetCharacterImage(string speaker, string expression)
     {
         characterImage.enabled = true;
 
-        if (speaker == "Alex") characterImage.sprite = Alex;
+        if (speaker == "Alex") 
+        {
+            if (expression == "Normal") characterImage.sprite = Alex_Normal;
+            else if (expression == "Sad") characterImage.sprite = Alex_Sad;
+            else if (expression == "Happy") characterImage.sprite = Alex_Happy;
+        }
 
-        else if (speaker == "Freya") characterImage.sprite = Freya;
+        else if (speaker == "Freya") 
+        {
+            if (expression == "Normal") characterImage.sprite = Freya_Normal;
+            else if (expression == "Angry") characterImage.sprite = Freya_Angry;
+            else if (expression == "Open") characterImage.sprite = Freya_Open;
+        }
 
-        else if (speaker == "Magnus") characterImage.sprite = Magnus;
+        else if (speaker == "Magnus") 
+        {
+            if (expression == "Normal") characterImage.sprite = Magnus_Normal;
+            else if (expression == "Angry") characterImage.sprite = Magnus_Angry;
+            else if (expression == "Happy") characterImage.sprite = Magnus_Happy;
+        }
+
+        else if (speaker == "Sword") 
+        {
+            if (expression == "Normal") characterImage.sprite = Sword_Normal;
+            else if (expression == "CloseEyes") characterImage.sprite = Sword_CloseEyes;
+            else if (expression == "Surprised") characterImage.sprite = Sword_Surprised;
+            else if (expression == "Confused") characterImage.sprite = Sword_Confused;
+            else if (expression == "Serious") characterImage.sprite = Sword_Serious;
+        }
 
         else if (speaker == "Werewolf") characterImage.sprite = Werewolf;
 
@@ -123,26 +167,39 @@ public class DialogueHandler : MonoBehaviour
 
     IEnumerator ChangeSpeaker()
     {
-        changingSpeaker = true;
-
-        if (speakers[index-1] != "Werewolf") CharacterAnimator.Play("Exit");
-        else CharacterAnimator.Play("Werewolf Exit");
-
-        if (index > 0 && speakers[index-1] != "Narrative") DialogueAnimator.Play("Exit");
-        else DialogueAnimator.Play("Narrative Exit");
+        isChangingSpeaker = true;
+        ExitAnimation();
 
         continueText.SetActive(false);
 
         yield return new WaitForSeconds(changeSpeakerDelay);
 
-        if (speakers[index] != "Narrative") 
+        EntryAnimation();
+        continueText.SetActive(true);   
+        isChangingSpeaker = false;
+    }
+
+    void ClickedWhenChangingSpeaker()
+    {
+        StopAllCoroutines();
+        isChangingSpeaker = false;
+        EntryAnimation();
+        continueText.SetActive(true);
+    }
+
+    void EntryAnimation()
+    {
+        isNarrative = speakers[index] == "";
+
+        if (!isNarrative) 
         {
             speaker.text = speakers[index];
             sentence.text = sentences[index];
-            SetCharacterImage(speakers[index]);
+            SetCharacterImage(speakers[index], expression[index]);
 
-            if (speakers[index] != "Werewolf") CharacterAnimator.Play("Entry");
-            else CharacterAnimator.Play("Werewolf Entry");
+            if (speakers[index] == "Werewolf") CharacterAnimator.Play("Werewolf Entry");
+            else if (speakers[index] == "Sword") CharacterAnimator.Play("Sword Entry");
+            else CharacterAnimator.Play("Entry");
 
             DialogueAnimator.Play("Entry");
         }
@@ -151,43 +208,22 @@ public class DialogueHandler : MonoBehaviour
             narrative.text = sentences[index];
             DialogueAnimator.Play("Narrative Entry"); 
         }
-        
-        continueText.SetActive(true);   
-
-        changingSpeaker = false;
     }
 
-    void ClickedWhenChangingSpeaker()
+    void ExitAnimation()
     {
-        StopAllCoroutines();
-        changingSpeaker = false;
+        if (speakers[index-1] == "Werewolf") CharacterAnimator.Play("Werewolf Exit");
+        else if (speakers[index-1] == "Sword") CharacterAnimator.Play("Sword Exit");
+        else if (speakers[index-1] != "") CharacterAnimator.Play("Exit");
 
-        if (speakers[index] != "Narrative")
-        {
-            speaker.text = speakers[index];
-            sentence.text = sentences[index];
-            SetCharacterImage(speakers[index]);
-
-            if (speakers[index] != "Werewolf") CharacterAnimator.Play("Entry");
-            else CharacterAnimator.Play("Werewolf Entry");
-
-            DialogueAnimator.Play("Entry");
-
-            continueText.SetActive(true);
-        }
-        else
-        {
-            narrative.text = sentences[index];
-            DialogueAnimator.Play("Narrative Entry");
-        }
+        if (speakers[index-1] != "") DialogueAnimator.Play("Exit");
+        else DialogueAnimator.Play("Narrative Exit");
     }
 
     IEnumerator EndDialogue()
     {
         continueText.SetActive(false);
-
-        CharacterAnimator.Play("Exit");
-        DialogueAnimator.Play("Exit");
+        ExitAnimation();
 
         yield return new WaitForSeconds(changeSpeakerDelay);
 

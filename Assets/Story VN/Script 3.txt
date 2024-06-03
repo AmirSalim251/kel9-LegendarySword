@@ -1,23 +1,23 @@
-Alex: OH YEAH, I DID IT!
+Alex(Happy): OH YEAH, I DID IT!
 
-Sword: Indeed, you did. (sighs)
+Sword(Normal): Indeed, you did. (sighs)
 
-Magnus: Hey, let's not forget our contributions as well.
+Magnus(Normal): Hey, let's not forget our contributions as well.
 
-Freya: I never imagined a supposed hero could be this... naive.
+Freya(Angry): I never imagined a supposed hero could be this... naive.
 
-Alex: Wait, not you too! Why do you guys keep ganging up on me...
+Alex(Sad): Wait, not you too! Why do you guys keep ganging up on me...
 
-Alex: Oh well, let's just keep moving forward...
+Alex(Normal): Oh well, let's just keep moving forward...
 
-Alex: ...but where exactly are we going?
+Alex(Sad): ...but where exactly are we going?
 
 (Sword smacks Alex on the head)
 
-Alex: OUCH! What was that for?!
+Alex(Sad): OUCH! What was that for?!
 
-Sword: It's a spell to help you remember our path.
+Sword(Serious): It's a spell to help you remember our path.
 
-Alex: Ah, that's convenient. Thanks! I remember now, we're supposed to take a turn in a few meters...
+Alex(Happy): Ah, that's convenient. Thanks! I remember now, we're supposed to take a turn in a few meters...
 
-Magnus: …I should be granted the privilege of being a 3D model.
+Magnus(Angry): …I should be granted the privilege of being a 3D model.
