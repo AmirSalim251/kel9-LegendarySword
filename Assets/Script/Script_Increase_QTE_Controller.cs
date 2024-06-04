@@ -11,10 +11,14 @@ public class Script_Increase_QTE_Controller : MonoBehaviour
     public bool QTE_Check = false;
     public TMP_Text textComponent;
     public KeyCode input;
+    public Image button_Before;
+    public Image button_After;
     // public float increase_Value = 0;
     void Start()
     {
         textComponent.enabled = false;
+        button_After.enabled = false;
+        button_Before.enabled = true;
     }
 
     // Update is called once per frame
@@ -26,7 +30,14 @@ public class Script_Increase_QTE_Controller : MonoBehaviour
             {
                 fill_Amount += .2f;
             }
+            button_After.enabled = true;
+            button_Before.enabled = false;
             Debug.Log(input +  " QTE Worked");
+        }
+        if(Input.GetKeyUp(input))
+        {
+            button_After.enabled = false;
+            button_Before.enabled = true;
         }
         timer += Time.deltaTime;
         if(timer > .05)

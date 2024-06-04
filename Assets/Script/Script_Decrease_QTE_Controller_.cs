@@ -11,9 +11,13 @@ public class Script_Decrease_QTE_Controller_ : MonoBehaviour
     public bool QTE_Check = false;
     public TMP_Text textComponent;
     public KeyCode input;
+    public Image button_Before;
+    public Image button_After;
     void Start()
     {
         textComponent.enabled = false;
+        button_After.enabled = false;
+        button_Before.enabled = true;
     }
 
     // Update is called once per frame
@@ -25,14 +29,25 @@ public class Script_Decrease_QTE_Controller_ : MonoBehaviour
             {
                 fill_Amount -= .2f;
             }
+            button_After.enabled = true;
+            button_Before.enabled = false;
             Debug.Log(input +  " QTE Worked");
             
+        }
+        if(Input.GetKeyUp(input))
+        {
+            button_After.enabled = false;
+            button_Before.enabled = true;
         }
         timer += Time.deltaTime;
         if(timer > .05 && fill_Amount > 0)
         {
             timer = 0;
-            fill_Amount += 0.02f; 
+            timer = 0;
+            if(fill_Amount != 0 && fill_Amount < 1)
+            {
+                fill_Amount += 0.02f;
+            } 
         }
         if(fill_Amount > 1 )
         {
