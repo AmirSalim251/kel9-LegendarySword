@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70bc11211452675459d9b2b8fd264e06, type: 3}
+  m_Name: StageTest
+  m_EditorClassIdentifier: 
+  stageName: Stage Test
+  description: Just for Testing
+  stageID: 2
+  storyStart: {fileID: 4900000, guid: d83ebcefb7655da4d8d8f1142e75f146, type: 3}
+  storyMid: {fileID: 4900000, guid: 80452812d370e7c4d863fad3f8efa656, type: 3}
+  storyEnd: {fileID: 4900000, guid: d3c5cc08b0b35d64d92103a6f3b3774f, type: 3}
+  enemyPrefab: {fileID: 5075270154224449297, guid: c78ed7b14aa15494586a66ce5f2232e2, type: 3}
+  enemyID: 0
+  itemReward: {fileID: 11400000, guid: ba96367e8b4457745a2266553bee0dfa, type: 2}
+  itemAmount: 1
+  stageObjectives:
+  - objective: 0
+    objectiveReq: 0
+    objectiveDesc: Turn Taken in Combat
+  - objective: 1
+    objectiveReq: 5
+    objectiveDesc: HP Lost (In Percent)
+  - objective: 2
+    objectiveReq: 0
+    objectiveDesc: No Fallen Character
+  isCleared: 0

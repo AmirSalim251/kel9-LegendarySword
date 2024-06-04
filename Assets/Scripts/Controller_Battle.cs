@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,14 +11,17 @@ public enum BattleState { START, PLAYER1TURN, PLAYER2TURN, PLAYER3TURN, ENEMYTUR
 
 public class Controller_Battle : MonoBehaviour
 {
+    public GameController gameController;
+
+    private GameObject combatUI;
+
     public TMP_Text Log;
 
     public PlayerPanel P1UI;
     public PlayerPanel P2UI;
     public PlayerPanel P3UI;
 
-    int turnCount;
-    public TMP_Text turnCounter;
+    
 
     Controller_CharData ActivePlayer;
     Controller_EnemyData ActiveEnemy;
@@ -28,10 +30,13 @@ public class Controller_Battle : MonoBehaviour
 
     A_Smash_QTE_Controller qteController;
     Controller_RT rtController;
+    
 
     public static Controller_CharData player1Unit;
     public static Controller_CharData player2Unit;
     public static Controller_CharData player3Unit;
+
+    public int[] PlayerAlive = {1,2,3,4};
 
     public static Controller_EnemyData enemyUnit;
 
@@ -41,14 +46,28 @@ public class Controller_Battle : MonoBehaviour
     public bool qteCheck;
     public Animator enemyPanelAnimator;
 
+    [Header("Objective")]
+    public int turnCount;
+    public TMP_Text turnCounter;
+
+    public int totalHP;
+    public float totalHPDelta;
+
+    public int totalCharDead;
+
+    // Start is called before the first frame update
     void Start()
     {
         qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
         rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
         qteCheck = false;
         StartCoroutine(SetupBattle());
+
+        combatUI = GameObject.FindGameObjectWithTag("CombatUI");
+
     }
 
+    // Update is called once per frame
     void Update()
     {
         turnCounter.SetText(turnCount.ToString());
@@ -59,9 +78,12 @@ public class Controller_Battle : MonoBehaviour
         player2Unit = GameObject.FindGameObjectWithTag("Player 2").GetComponent<Controller_CharData>();
         player3Unit = GameObject.FindGameObjectWithTag("Player 3").GetComponent<Controller_CharData>();
 
+        /*yield return new WaitForSeconds(1f);*/
+
         enemyUnit = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();
 
         ActivePlayer = player1Unit;
+        /*ActiveEnemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Controller_EnemyData>();*/
         ActiveEnemy = enemyUnit;
 
         yield return new WaitForSeconds(1f);
@@ -70,8 +92,8 @@ public class Controller_Battle : MonoBehaviour
         Log.text = "Game Start";
 
         turnCount = 0;
-        state = BattleState.ENEMYTURN;
-        PassTurn();
+        state = BattleState.PLAYER1TURN;
+        PlayerTurn();
     }
 
     IEnumerator QTEEvent()
@@ -98,7 +120,7 @@ public class Controller_Battle : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         enemyPanelAnimator.SetTrigger("On Hit");
-        
+
         int HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
         bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
 
@@ -126,7 +148,7 @@ public class Controller_Battle : MonoBehaviour
         Log.text = ActivePlayer.charName + " is trying to block!";
 
         yield return new WaitForSeconds(1f);
-        
+
         ActivePlayer.Blocking();
         PassTurn();
         yield return new WaitForSeconds(1f);
@@ -170,7 +192,7 @@ public class Controller_Battle : MonoBehaviour
                 StartCoroutine(EnemyTurn());
             }
         }
-        
+
         else if (state == BattleState.PLAYER2TURN)
         {
             P2UI.MoveDown();
@@ -196,22 +218,22 @@ public class Controller_Battle : MonoBehaviour
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
-        
+
         else if (state == BattleState.ENEMYTURN)
         {
-            if (!player1Unit.isDead) 
+            if (!player1Unit.isDead)
             {
                 P1UI.MoveUp();
                 state = BattleState.PLAYER1TURN;
                 ActivePlayer = player1Unit;
             }
-            else if (!player2Unit.isDead) 
+            else if (!player2Unit.isDead)
             {
                 P2UI.MoveUp();
                 state = BattleState.PLAYER2TURN;
                 ActivePlayer = player2Unit;
             }
-            else if (!player3Unit.isDead) 
+            else if (!player3Unit.isDead)
             {
                 P3UI.MoveUp();
                 state = BattleState.PLAYER3TURN;
@@ -225,16 +247,18 @@ public class Controller_Battle : MonoBehaviour
     {
         Log.text = "Enemy's turn!";
 
+        isActionAllowed = false;
+
         yield return new WaitForSeconds(1f);
 
         //Randomizing target for enemy to attack
         while (true)
         {
-            int RandomTargetIndex = UnityEngine.Random.Range(0, 3);
-            RandomTargetIndex++;
-            Debug.Log(RandomTargetIndex);
+            int RandomTargetIndex = UnityEngine.Random.Range(0, PlayerAlive.Length);
+            int RandomTargetVal = PlayerAlive[RandomTargetIndex];
+            Debug.Log(RandomTargetVal);
 
-            if (RandomTargetIndex == 1)
+            if (RandomTargetVal == 1)
             {
                 if (!player1Unit.isDead)
                 {
@@ -242,7 +266,7 @@ public class Controller_Battle : MonoBehaviour
                     break;
                 }
             }
-            else if (RandomTargetIndex == 2)
+            else if (RandomTargetVal == 2)
             {
                 if (!player2Unit.isDead)
                 {
@@ -250,7 +274,7 @@ public class Controller_Battle : MonoBehaviour
                     break;
                 }
             }
-            else if (RandomTargetIndex == 3)
+            else if (RandomTargetVal == 3)
             {
                 if (!player3Unit.isDead)
                 {
@@ -259,7 +283,7 @@ public class Controller_Battle : MonoBehaviour
                 }
             }
         }
-        
+
         Log.text = "Enemy is attacking " + ActiveTarget.charName;
 
         if (ActiveTarget.isBlocking == false)
@@ -275,11 +299,15 @@ public class Controller_Battle : MonoBehaviour
             Debug.Log("Attack berhasil");
             Debug.Log("Damage dihasilkan: " + EnemyDamageOutput);
             Debug.Log("Sisa HP " + ActiveTarget.charName + ": " + ActiveTarget.curHP);
+
         }
         else if (ActiveTarget.isBlocking == true)
         {
             Debug.Log("Attack dihentikan");
             Log.text = ActiveTarget.charName + " blocked enemy's attack!";
+
+            //reset target block state to false
+            ActiveTarget.isBlocking = false;
         }
 
         // Wait before passing turn
@@ -289,25 +317,82 @@ public class Controller_Battle : MonoBehaviour
         {
             Remove(ActiveTarget);
 
-            int PlayerDead = ActiveTarget.charID;
+            /*if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
+            {
+                state = BattleState.LOST;
+                EndBattle();
+            }
+            else
+            {
+                if (player1Unit.isDead)
+            {
+                ActivePlayer = player2Unit;
+                state = BattleState.PLAYER2TURN;
+                if (player2Unit.isDead)
+                {
+                    ActivePlayer = player3Unit;
+                    state = BattleState.PLAYER3TURN;
+                }
+            }
+            else
+            {
+                ActivePlayer = player1Unit;
+                state = BattleState.PLAYER1TURN;
+
+            }
+                PlayerTurn();
+            }
             
+        }
+        else
+        {
+            if (player1Unit.isDead)
+            {
+                ActivePlayer = player2Unit;
+                state = BattleState.PLAYER2TURN;
+                if (player2Unit.isDead)
+                {
+                    ActivePlayer = player3Unit;
+                    state = BattleState.PLAYER3TURN;
+                }
+            }
+            else
+            {
+                ActivePlayer = player1Unit;
+                state = BattleState.PLAYER1TURN;
+
+            }
+            PlayerTurn();
+        }*/
+
             if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
             {
                 state = BattleState.LOST;
                 EndBattle();
             }
-        }
-        PassTurn();
-        turnCount++;
-    }
+            PassTurn();
+            turnCount++;
 
+
+        }
+    }
     IEnumerator EndBattle()
     {
         if (state == BattleState.WON)
         {
+            //scoring check
+            CalculateHPDelta();
+            CheckPlayerDead();
+
             Log.text = "You Won!";
             yield return new WaitForSeconds(1f);
             Debug.Log("You won");
+
+            gameController.scoreController.CheckScore();
+
+            //switch from combatUI to resultPanel
+            HideCombatUI();
+            gameController.endPanel.SetActive(true);
             
         }
         else if (state == BattleState.LOST)
@@ -316,7 +401,6 @@ public class Controller_Battle : MonoBehaviour
             yield return new WaitForSeconds(1f);
             Debug.Log("You lose");
         }
-        SceneManager.LoadScene("MainMenu");
     }
 
     public void OnAttackButton()
@@ -326,11 +410,13 @@ public class Controller_Battle : MonoBehaviour
         if (state == BattleState.PLAYER1TURN)
         {
             StartCoroutine(QTEEvent());
+            // qteController.enabled = false;
         }
         else
         {
             StartCoroutine(PlayerAttack());
-        }        
+        }
+        
     }
 
     public void OnBlockButton()
@@ -340,14 +426,85 @@ public class Controller_Battle : MonoBehaviour
         StartCoroutine(PlayerDefend());
     }
 
+    
+    public void CalculateHPDelta()
+    {
+        totalHP = player1Unit.baseHP + player2Unit.baseHP + player3Unit.baseHP;
+        int totalHPMinus = player1Unit.curHP + player2Unit.curHP + player3Unit.curHP;
+        Debug.Log("total HP" + totalHP);
+        Debug.Log("HP minus" + totalHPMinus);
+
+        totalHPDelta = ((float)(totalHP - totalHPMinus) / totalHP) * 100;
+        totalHPDelta = (float)Math.Floor(totalHPDelta);
+
+        Debug.Log(totalHPDelta);
+        /*totalHPDelta = totalHPDelta / totalHP * 100;*/
+    }
+
+    public void HideCombatUI()
+    {
+        CanvasGroup combatUIGroup = combatUI.GetComponent<CanvasGroup>();
+
+        combatUIGroup.alpha = 0f; // Make UI element invisible
+        combatUIGroup.interactable = false; // Disable interaction
+        combatUIGroup.blocksRaycasts = false; // Disable raycasting
+    }
+
+
+
+    public void CheckPlayerDead()
+    {
+        if (player1Unit.isDead == true)
+        {
+            totalCharDead++;
+        }
+        
+        if (player2Unit.isDead == true)
+        {
+            totalCharDead++;
+        }
+
+        if (player3Unit.isDead == true)
+        {
+            totalCharDead++;
+        }
+    }
+
+    public int[] InsertPlayerAlive(int[] originalArray, int newElement)
+    {
+        int x = (newElement - 1);
+        int[] newArray = new int[originalArray.Length + 1];
+
+        // Copy elements up to the newElement's position
+        for (int i = 0; i < x; i++)
+        {
+            newArray[i] = originalArray[i];
+        }
+
+        // Insert the new element
+        newArray[x] = newElement;
+
+        // Copy the remaining elements
+        for (int i = x; i < originalArray.Length; i++)
+        {
+            newArray[i + 1] = originalArray[i];
+        }
+
+        return newArray;
+    }
+
     void Remove(Controller_CharData Character)
     {
-        ActiveTarget.gameObject.SetActive(false);
         ActiveTarget.curSP = 0;
+        ActiveTarget.gameObject.SetActive(false);
+
+        //updating playerAlive
+        int PlayerDead = ActiveTarget.charID;
+        int[] UpdatePlayerAlive = PlayerAlive.Where(val => val != PlayerDead).ToArray();
+        PlayerAlive = UpdatePlayerAlive;
 
         if (Character.charName == "Alex") P1UI.Die();
         else if (Character.charName == "Freya") P2UI.Die();
         else if (Character.charName == "Magnus") P3UI.Die();
-        
     }
 }

@@ -39,6 +39,7 @@ public class ConsumableItem : BaseItem
 */
         /*Debug.Log("Used Consumable");*/
 
+        battleData = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
 
         switch (consumableType)
         {
@@ -73,7 +74,12 @@ public class ConsumableItem : BaseItem
                     charTarget.gameObject.SetActive(true);
                     charTarget.isDead = false;
                     charTarget.curHP += effectHP;
+
+                    battleData.PlayerAlive = battleData.InsertPlayerAlive(battleData.PlayerAlive, charTarget.charID);
+
                     isItemUsed = true;
+
+                    battleData.InsertPlayerAlive(battleData.PlayerAlive, charTarget.charID);
 
                 }
                 else

@@ -12,6 +12,8 @@ TagManager:
   - QTEController
   - CameraController
   - RTController
+  - BGM Volume Slider
+  - SFX Volume Slider
   layers:
   - Default
   - TransparentFX

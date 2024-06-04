@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,6 +8,8 @@ using UnityEngine.EventSystems;
 
 public class Controller_InventoryManager : MonoBehaviour
 {
+    public GameObject inventPanel;
+    public InvenType inventoryType;
 
     [SerializeReference] public List<Controller_ItemSlot> items = new List<Controller_ItemSlot>();
 
@@ -17,7 +20,7 @@ public class Controller_InventoryManager : MonoBehaviour
     [SerializeField] private ControllerMouse _itemSlotMouse;
 
     public ControllerMouse mouse { get => _itemSlotMouse; }
-    private Controller_ItemDictionary itemDictionary;
+    public Controller_ItemDictionary itemDictionary;
 
     [SerializeField] private int _inventorySize;
 
@@ -38,7 +41,7 @@ public class Controller_InventoryManager : MonoBehaviour
     }
     void Start()
     {
-        SetDefaultConsumablePouch();
+        
     }
 
     // Update is called once per frame
@@ -183,12 +186,20 @@ public class Controller_InventoryManager : MonoBehaviour
             
         }
 
-        for (int i = 0; i < _existingPanels.Count; i++)
+        LoadInventory();
+
+        if(items.Count == 0)
         {
-            items.Add(new Controller_ItemSlot(null, 0));
-            _existingPanels[i].mouse = mouse;
+            for (int i = 0; i < _existingPanels.Count; i++)
+            {
+                items.Add(new Controller_ItemSlot(null, 0));
+                _existingPanels[i].mouse = mouse;
+            }
+            SetDefaultConsumablePouch();
+            _inventorySize = _existingPanels.Count;
         }
-        _inventorySize = _existingPanels.Count;
+        
+        
     }
 
     private void SetDefaultConsumablePouch()
@@ -302,10 +313,81 @@ public class Controller_InventoryManager : MonoBehaviour
         selectedItem = null; // Reset selection after swap
     }
 
+    public void SaveInventory()
+    {
+        InventoryData inventoryData = new InventoryData();
+        foreach (var slot in items)
+        {
+            inventoryData.itemSlots.Add(new ItemSlotData(slot));
+        }
+
+        string json = JsonUtility.ToJson(inventoryData, true);
+        File.WriteAllText(Application.persistentDataPath + "/inventory.json", json);
+    }
+
+    public void LoadInventory()
+    {
+        string path = Application.persistentDataPath + "/inventory.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            InventoryData inventoryData = JsonUtility.FromJson<InventoryData>(json);
+
+            items.Clear();
+            foreach (var slotData in inventoryData.itemSlots)
+            {
+                BaseItem item = itemDictionary.GetValueByKey(slotData.itemName.ToString());
+                items.Add(new Controller_ItemSlot(item, slotData.stacks));
+            }
+
+            RefreshInventory();
+        }
+    }
+
+    public void OpenInventory()
+    {
+        CanvasGroup inventUIGroupe = inventPanel.GetComponent<CanvasGroup>();
+        inventUIGroupe.alpha = 1.0f; // Make UI element visible
+        inventUIGroupe.interactable = true; // Enable interaction
+        inventUIGroupe.blocksRaycasts = true; // Enable raycasting
+    }
+    public void CloseInventory()
+    {
+        SaveInventory();
+        CanvasGroup inventUIGroupe = inventPanel.GetComponent<CanvasGroup>();
+        inventUIGroupe.alpha = 0f; // Make UI element invisible
+        inventUIGroupe.interactable = false; // Disable interaction
+        inventUIGroupe.blocksRaycasts = false; // Disable raycasting
+    }
+}
+
+public enum InvenType
+{
+    Inventory,
+    ItemPouch
 }
 
 public enum ItemSlotType
 {
     Inventory,
     Consumable
+}
+
+[System.Serializable]
+public class ItemSlotData
+{
+    public string itemName;
+    public int stacks;
+
+    public ItemSlotData(Controller_ItemSlot slot)
+    {
+        itemName = slot.item?.itemName ?? "";
+        stacks = slot.stacks;
+    }
+}
+
+[System.Serializable]
+public class InventoryData
+{
+    public List<ItemSlotData> itemSlots = new List<ItemSlotData>();
 }

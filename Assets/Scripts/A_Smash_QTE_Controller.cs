@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class A_Smash_QTE_Controller : MonoBehaviour
 {
     A_Smash_QTE_Controller qteController;
-    Controller_RT rtController;
+    
     Controller_Battle ControllerBattle;
     public float currentTime = 0f;
     public float timeLimit = 10f;
@@ -21,7 +21,6 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     void Awake()
     {   
         ControllerBattle = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
-        rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
         qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
         qteIndicator.fillAmount = 0f;
     }
@@ -38,7 +37,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
         currentTime += Time.deltaTime;
 
         if (Input.GetKeyDown(KeyCode.A))
-        {   
+        {
             fillAmount += increaseRate;
             qteIndicator.fillAmount = fillAmount;
         }
@@ -49,18 +48,17 @@ public class A_Smash_QTE_Controller : MonoBehaviour
         if (fillAmount >= 1f)
         {
             ControllerBattle.Log.text = "Attack successful!";
-            ControllerBattle.qteCheck = true;
+
             qteIndicator.fillAmount = 0;
             
             qteController.enabled = false;
             qteButton.enabled = false;
-            StartCoroutine(ControllerBattle.RTTime());            
+            StartCoroutine(ControllerBattle.PlayerAttack());            
         }
 
         if (currentTime >= timeLimit)
         {
             ControllerBattle.Log.text = "Attack missed!";
-            ControllerBattle.qteCheck = false;
             Debug.Log("Attack missed!");
 
             qteIndicator.fillAmount = 0;

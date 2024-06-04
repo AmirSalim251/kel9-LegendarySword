@@ -8,6 +8,8 @@ using System;
 
 public class DialogueHandler : MonoBehaviour
 {
+    public DialogueType dialogueType;
+
     public TextAsset textFile;
 
     [Space]
@@ -54,10 +56,40 @@ public class DialogueHandler : MonoBehaviour
     private bool isNarrative;
     private bool isChangingSpeaker = false;
 
-    void Start() 
+    void Awake()
     {
+        Debug.Log("Dialog Reset");
+        // Initialize variables here to ensure they are reset every time the scene is loaded
+        speakers.Clear();
+        sentences.Clear();
+        index = 0;
+
+        // Initialize components
         CharacterAnimator = Character.GetComponent<Animator>();
         characterImage = Character.GetComponent<Image>();
+    }
+
+    void Start()
+    {
+        //get Text Script
+        if(Controller_GameStage.Instance != null)
+        {
+            if (dialogueType == DialogueType.DialogueEntry)
+            {
+                textFile = Controller_GameStage.Instance.stageChosen.storyStart;
+            }
+            else if (dialogueType == DialogueType.DialogueCombat)
+            {
+                textFile = Controller_GameStage.Instance.stageChosen.storyMid;
+            }
+            else if (dialogueType == DialogueType.DialogueEndCombat)
+            {
+                textFile = Controller_GameStage.Instance.stageChosen.storyEnd;
+            }
+        }
+
+        /*CharacterAnimator = Character.GetComponent<Animator>();
+        characterImage = Character.GetComponent<Image>();*/
 
         speaker.text = string.Empty;
         sentence.text = string.Empty;
@@ -71,6 +103,7 @@ public class DialogueHandler : MonoBehaviour
         speaker.text = speakers[index];
         sentence.text = sentences[index];
     }
+
 
     void Update() 
     {
@@ -179,6 +212,7 @@ public class DialogueHandler : MonoBehaviour
         isChangingSpeaker = false;
     }
 
+   
     void ClickedWhenChangingSpeaker()
     {
         StopAllCoroutines();
@@ -219,7 +253,7 @@ public class DialogueHandler : MonoBehaviour
         if (speakers[index-1] != "") DialogueAnimator.Play("Exit");
         else DialogueAnimator.Play("Narrative Exit");
     }
-
+    
     IEnumerator EndDialogue()
     {
         continueText.SetActive(false);
@@ -232,4 +266,13 @@ public class DialogueHandler : MonoBehaviour
         if(SceneManager.GetActiveScene().name == "VN Scene") 
             SceneManager.LoadScene("CombatScene 3");
     }
+
 }
+
+public enum DialogueType
+{
+    DialogueEntry,
+    DialogueCombat,
+    DialogueEndCombat
+}
+
