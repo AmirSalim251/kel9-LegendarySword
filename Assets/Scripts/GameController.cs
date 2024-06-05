@@ -76,6 +76,8 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
+        SetupButtonTrigger();
+
         /*charDataAlex = LoadCharData();*/
         isPaused = false;
         isSettingOpen = false;

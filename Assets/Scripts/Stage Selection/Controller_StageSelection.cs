@@ -20,6 +20,7 @@ public class Controller_StageSelection : MonoBehaviour
     public GameObject btnInventory;
     public GameObject btnBack;
     public GameObject btnConfirm;
+    public GameObject btnDepart;
 
     private float speed = 60f;
     // Start is called before the first frame update
@@ -55,6 +56,10 @@ public class Controller_StageSelection : MonoBehaviour
         //button Confirm
         AddEvent(btnConfirm, EventTriggerType.PointerEnter, delegate { OnEnter(btnConfirm); });
         AddEvent(btnConfirm, EventTriggerType.PointerClick, delegate { OnClick(btnConfirm); });
+
+        //button EnterStage
+        AddEvent(btnDepart, EventTriggerType.PointerEnter, delegate { OnEnter(btnDepart); });
+        AddEvent(btnDepart, EventTriggerType.PointerClick, delegate { OnClick(btnDepart); });
 
     }
 

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Stage1Cutscene : MonoBehaviour
 {
+    private Controller_Battle battleController;
+
     public GameObject CombatUI;
     public GameObject CameraController;
     public GameObject DialogueCanvas;
@@ -15,7 +17,10 @@ public class Stage1Cutscene : MonoBehaviour
     
     void Awake()
     {
-        CombatUI.SetActive(false);
+
+        battleController = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
+        battleController.HideCombatUI();
+
         CameraController.SetActive(false);
         CombatCamera.SetActive(false);
         StartCoroutine(Intro());
@@ -42,7 +47,9 @@ public class Stage1Cutscene : MonoBehaviour
 
     void EndCutsene()
     {
-        CombatUI.SetActive(true);
+        this.gameObject.SetActive(false);
+        /*CombatUI.SetActive(true);*/
+        battleController.ShowCombatUI();
         CameraController.SetActive(true);
         CombatCamera.SetActive(true);
         

@@ -8,6 +8,9 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    [Header("Panels")]
+    public GameObject panelStart;
+    public GameObject panelMenu;
     public GameObject panelSettings;
 
     public Button buttonNewGame;
@@ -21,6 +24,15 @@ public class MainMenu : MonoBehaviour
 
     public void Start()
     {
+        if(SessionManager.isNewSession)
+        {
+            HideMenuUI();
+        }
+        else
+        {
+            panelStart.SetActive(false);
+        }
+
         //setup
         //button New Game
         AddEvent(buttonNewGame.gameObject, EventTriggerType.PointerEnter, delegate { OnEnter(buttonNewGame.gameObject); });
@@ -45,6 +57,16 @@ public class MainMenu : MonoBehaviour
 
     public void Update()
     {
+        if(SessionManager.isNewSession)
+        {
+            if (Input.anyKeyDown)
+            {
+                panelStart.SetActive(false);
+                ShowMenuUI();
+                SessionManager.isNewSession = false;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             buttonQuit.onClick.Invoke();
@@ -128,6 +150,25 @@ public class MainMenu : MonoBehaviour
         isSettingOpen = false;
     }
 
+    public void HideMenuUI()
+    {
+        CanvasGroup menuGroup = panelMenu.GetComponent<CanvasGroup>();
+        menuGroup.alpha = 0f; // Make UI element invisible
+        menuGroup.interactable = false; // Disable interaction
+        menuGroup.blocksRaycasts = false; // Disable raycasting
+    }
+
+    public void ShowMenuUI()
+    {
+        CanvasGroup menuGroup = panelMenu.GetComponent<CanvasGroup>();
+        menuGroup.alpha = 1.0f; // Make UI element visible
+        menuGroup.interactable = true; // Enable interaction
+        menuGroup.blocksRaycasts = true; // Enable raycasting
+    }
+
+
+
+
     private void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
     {
         EventTrigger trigger = obj.GetComponent<EventTrigger>();
@@ -137,4 +178,9 @@ public class MainMenu : MonoBehaviour
         trigger.triggers.Add(eventTrigger);
     }
 
+}
+
+public static class SessionManager
+{
+    public static bool isNewSession = true;
 }

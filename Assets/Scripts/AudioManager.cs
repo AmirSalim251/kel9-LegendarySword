@@ -98,7 +98,6 @@ public class AudioManager : MonoBehaviour
         {
             volumeSliderBGM = GameObject.FindGameObjectWithTag("BGM Volume Slider").GetComponent<Slider>();
             volumeSliderSFX = GameObject.FindGameObjectWithTag("SFX Volume Slider").GetComponent<Slider>();
-
         }
 
         if (volumeSliderBGM != null && volumeSliderSFX != null)

@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 
 public class Controller_StageDetail : MonoBehaviour
@@ -40,13 +42,19 @@ public class Controller_StageDetail : MonoBehaviour
     public void OpenPanel()
     {
         UpdatePanelData();
-        detailPanel.SetActive(true);
+        CanvasGroup detailPanelGroup = detailPanel.GetComponent<CanvasGroup>();
+        detailPanelGroup.alpha = 1.0f; // Make UI element visible
+        detailPanelGroup.interactable = true; // Enable interaction
+        detailPanelGroup.blocksRaycasts = true; // Enable raycasting
     }
 
     public void ClosePanel()
     {
         stageData = null;
-        detailPanel.SetActive(false);
+        CanvasGroup detailPanelGroup = detailPanel.GetComponent<CanvasGroup>();
+        detailPanelGroup.alpha = 0f; // Make UI element invisible
+        detailPanelGroup.interactable = false; // Disable interaction
+        detailPanelGroup.blocksRaycasts = false; // Disable raycasting
     }
 
     public void UpdatePanelData()

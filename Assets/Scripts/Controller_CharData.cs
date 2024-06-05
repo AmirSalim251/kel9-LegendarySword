@@ -29,6 +29,8 @@ public class Controller_CharData : MonoBehaviour
     public bool isBlocking = false;
     int DefChance;
 
+    public Animator panelAnimator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -95,6 +97,9 @@ public class Controller_CharData : MonoBehaviour
 
     public bool TakeDamage(int damage)
     {
+        VFX.instance.Create(transform.position, damage.ToString(), charName);
+        panelAnimator.Play("On Hit");
+
         curHP -= damage;
 
         if(curHP <= 0)

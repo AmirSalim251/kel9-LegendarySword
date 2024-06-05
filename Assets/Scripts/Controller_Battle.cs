@@ -13,7 +13,7 @@ public class Controller_Battle : MonoBehaviour
 {
     public GameController gameController;
 
-    private GameObject combatUI;
+    public GameObject combatUI;
 
     public TMP_Text Log;
 
@@ -55,6 +55,11 @@ public class Controller_Battle : MonoBehaviour
 
     public int totalCharDead;
 
+    /*void Awake()
+    {
+        combatUI = GameObject.FindGameObjectWithTag("CombatUI");
+    }*/
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,9 +67,6 @@ public class Controller_Battle : MonoBehaviour
         rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
         qteCheck = false;
         StartCoroutine(SetupBattle());
-
-        combatUI = GameObject.FindGameObjectWithTag("CombatUI");
-
     }
 
     // Update is called once per frame
@@ -120,6 +122,8 @@ public class Controller_Battle : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         enemyPanelAnimator.SetTrigger("On Hit");
+
+        AudioManager.Instance.PlaySFX("playerHit");
 
         int HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
         bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
@@ -288,10 +292,13 @@ public class Controller_Battle : MonoBehaviour
 
         if (ActiveTarget.isBlocking == false)
         {
+            
             ActiveEnemy.animator.SetTrigger("isAttack");
 
             // Wait for the attack animation
             yield return new WaitForSeconds(0.85f);
+
+            AudioManager.Instance.PlaySFX("enemyHit");
 
             int EnemyDamageOutput = (ActiveEnemy.monsterATK * 4) - (ActiveTarget.charDEF * 2);
             ActiveTarget.isDead = ActiveTarget.TakeDamage(EnemyDamageOutput);
@@ -317,64 +324,15 @@ public class Controller_Battle : MonoBehaviour
         {
             Remove(ActiveTarget);
 
-            /*if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
-            {
-                state = BattleState.LOST;
-                EndBattle();
-            }
-            else
-            {
-                if (player1Unit.isDead)
-            {
-                ActivePlayer = player2Unit;
-                state = BattleState.PLAYER2TURN;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                    state = BattleState.PLAYER3TURN;
-                }
-            }
-            else
-            {
-                ActivePlayer = player1Unit;
-                state = BattleState.PLAYER1TURN;
-
-            }
-                PlayerTurn();
-            }
-            
-        }
-        else
-        {
-            if (player1Unit.isDead)
-            {
-                ActivePlayer = player2Unit;
-                state = BattleState.PLAYER2TURN;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                    state = BattleState.PLAYER3TURN;
-                }
-            }
-            else
-            {
-                ActivePlayer = player1Unit;
-                state = BattleState.PLAYER1TURN;
-
-            }
-            PlayerTurn();
-        }*/
-
             if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
             {
                 state = BattleState.LOST;
                 EndBattle();
             }
-            PassTurn();
-            turnCount++;
-
-
+            
         }
+        PassTurn();
+        turnCount++;
     }
     IEnumerator EndBattle()
     {
@@ -448,6 +406,15 @@ public class Controller_Battle : MonoBehaviour
         combatUIGroup.alpha = 0f; // Make UI element invisible
         combatUIGroup.interactable = false; // Disable interaction
         combatUIGroup.blocksRaycasts = false; // Disable raycasting
+    }
+
+    public void ShowCombatUI()
+    {
+        CanvasGroup combatUIGroup = combatUI.GetComponent<CanvasGroup>();
+
+        combatUIGroup.alpha = 1.0f; // Make UI element visible
+        combatUIGroup.interactable = true; // Enable interaction
+        combatUIGroup.blocksRaycasts = true; // Enable raycasting
     }
 
 

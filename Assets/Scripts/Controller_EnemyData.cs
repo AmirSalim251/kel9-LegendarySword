@@ -33,6 +33,7 @@ public class Controller_EnemyData : MonoBehaviour
 
     public bool TakeDamage(int damage)
     {
+        VFX.instance.Create(transform.position, damage.ToString(), monsterName);
         animator.SetTrigger("isHit");
         curHP -= damage;
 

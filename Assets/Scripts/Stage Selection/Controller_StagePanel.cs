@@ -50,6 +50,7 @@ public class Controller_StagePanel : MonoBehaviour
 
         stageController.activeStage = obj;
         stageDetailController.stageData = obj.GetComponent<Controller_StagePanel>().stageData;
+        Controller_GameStage.Instance.stageChosen = stageData;
     }
 
     // Update is called once per frame
