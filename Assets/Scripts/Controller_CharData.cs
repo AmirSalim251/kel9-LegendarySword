@@ -115,6 +115,8 @@ public class Controller_CharData : MonoBehaviour
 
     public void Heal(int amount)
     {
+        panelAnimator.SetTrigger("OnHeal");
+
         curHP += amount;
         if (curHP > baseHP)
             curHP = baseHP;
@@ -129,6 +131,8 @@ public class Controller_CharData : MonoBehaviour
 
     public void RestoreMP(int amount)
     {
+        panelAnimator.SetTrigger("OnRestoreMP");
+
         curSP += amount;
         if (curSP > baseSP) 
             curSP = baseSP;

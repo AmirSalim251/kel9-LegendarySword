@@ -26,9 +26,4 @@ public class PlayerPanel : MonoBehaviour
     {
         animator.Play("Dead");
     }
-
-    public void OnHit()
-    {
-        animator.Play("OnHit");
-    }
 }
