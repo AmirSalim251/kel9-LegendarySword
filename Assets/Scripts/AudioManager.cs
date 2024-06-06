@@ -35,6 +35,7 @@ public class AudioManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             /*bgmSource = GetComponent<AudioSource>();*/
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -69,9 +70,7 @@ public class AudioManager : MonoBehaviour
         {
             LoadVolumeSFX();
         }
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        PlayMusic(mainMenuSong); // Start with the main menu song
+        // PlayMusic(mainMenuSong); // Start with the main menu song
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -90,7 +89,7 @@ public class AudioManager : MonoBehaviour
         {
             PlayMusic(vnSong);
         }
-        else if (currentScene == "CombatScene 3")
+        else if (currentScene == "CombatScene 3" || currentScene == "CombatScene 4")
         {
             PlayMusic(combatSong);
         }

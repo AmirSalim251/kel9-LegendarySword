@@ -98,7 +98,7 @@ public class Controller_CharData : MonoBehaviour
     public bool TakeDamage(int damage)
     {
         VFX.instance.Create(transform.position, damage.ToString(), charName);
-        panelAnimator.Play("On Hit");
+        panelAnimator.SetTrigger("OnHit");
 
         curHP -= damage;
 
@@ -118,6 +118,20 @@ public class Controller_CharData : MonoBehaviour
         curHP += amount;
         if (curHP > baseHP)
             curHP = baseHP;
+    }
+
+    public void UseMP(int amount)
+    {
+        curSP -= amount;
+        if (curSP < 0)
+            curSP = 0;
+    }
+
+    public void RestoreMP(int amount)
+    {
+        curSP += amount;
+        if (curSP > baseSP) 
+            curSP = baseSP;
     }
 
     public void Blocking()

@@ -47,12 +47,10 @@ public class Stage1Cutscene : MonoBehaviour
 
     void EndCutsene()
     {
-        this.gameObject.SetActive(false);
-        /*CombatUI.SetActive(true);*/
         battleController.ShowCombatUI();
         CameraController.SetActive(true);
         CombatCamera.SetActive(true);
         
-        Destroy(gameObject, 5);
+        Destroy(gameObject, 2.5f);
     }
 }

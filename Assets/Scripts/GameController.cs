@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour
     public GameObject buttonAttack;
     public GameObject buttonDefend;
     public GameObject buttonItem;
+    public GameObject buttonSkill;
 
     [Header("Settings Buttons")]
     public GameObject buttonPause;
@@ -123,6 +124,10 @@ public class GameController : MonoBehaviour
         //button Item
         AddEvent(buttonItem, EventTriggerType.PointerEnter, delegate { OnEnter(buttonItem); });
         AddEvent(buttonItem, EventTriggerType.PointerClick, delegate { OnClick(buttonItem); });
+
+        //button Skill
+        AddEvent(buttonSkill, EventTriggerType.PointerEnter, delegate { OnEnter(buttonSkill); });
+        AddEvent(buttonSkill, EventTriggerType.PointerClick, delegate { OnClick(buttonSkill); });
 
         //PAUSE
         //button Pause

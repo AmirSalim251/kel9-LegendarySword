@@ -14,12 +14,12 @@ public class PlayerPanel : MonoBehaviour
 
     public void MoveUp()
     {
-        transform.localPosition += new Vector3(0, 40f, 0);
+        transform.position += new Vector3(0, 25f, 0);
     }
 
     public void MoveDown()
     {
-        transform.localPosition -= new Vector3(0, 40f, 0);
+        transform.position -= new Vector3(0, 25f, 0);
     }
 
     public void Die()

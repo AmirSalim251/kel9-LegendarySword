@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,8 +21,6 @@ public class Controller_Battle : MonoBehaviour
     public PlayerPanel P1UI;
     public PlayerPanel P2UI;
     public PlayerPanel P3UI;
-
-    
 
     Controller_CharData ActivePlayer;
     Controller_EnemyData ActiveEnemy;
@@ -45,6 +44,7 @@ public class Controller_Battle : MonoBehaviour
     bool isActionAllowed;
     public bool qteCheck;
     public Animator enemyPanelAnimator;
+    public GameObject alexSkillPanel, freyaSkillPanel, magnusSkillPanel;
 
     [Header("Objective")]
     public int turnCount;
@@ -95,6 +95,7 @@ public class Controller_Battle : MonoBehaviour
 
         turnCount = 0;
         state = BattleState.PLAYER1TURN;
+        P1UI.MoveUp();
         PlayerTurn();
     }
 
@@ -504,5 +505,136 @@ public class Controller_Battle : MonoBehaviour
         if (Character.charName == "Alex") P1UI.Die();
         else if (Character.charName == "Freya") P2UI.Die();
         else if (Character.charName == "Magnus") P3UI.Die();
+    }
+    public void OnSkillButton()
+    {
+        if (ActivePlayer == player1Unit)
+            alexSkillPanel.SetActive(true);
+        
+        else if (ActivePlayer == player2Unit)
+            freyaSkillPanel.SetActive(true);
+
+        else if (ActivePlayer == player3Unit)
+            magnusSkillPanel.SetActive(true);
+    }
+
+    public void SelectFirstSkill()
+    {
+        if (ActivePlayer == player1Unit)
+            StartCoroutine(AlexFirstSkill());
+        
+        else if (ActivePlayer == player2Unit)
+            StartCoroutine(FreyaFirstSkill());
+
+        else if (ActivePlayer == player3Unit)
+            StartCoroutine(MagnusFirstSkill());
+    }
+
+    public IEnumerator AlexFirstSkill()
+    {
+        alexSkillPanel.SetActive(false);
+
+        int mpCost = player1Unit.baseSP;
+        if (player1Unit.curSP < mpCost)
+        {
+            Log.text = "Insufficient MP";
+            yield break;
+        }
+
+        isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is using Skill!";
+
+        yield return new WaitForSeconds(1f);
+
+        player1Unit.UseMP(mpCost); 
+        int attackAmount = UnityEngine.Random.Range(3, 6);
+        bool enemyIsDead = false;
+
+        for (int i = 0; i < attackAmount; i++)
+        {
+            int HeroDamageOutput = 2 * (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+            enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+            enemyPanelAnimator.SetTrigger("On Hit");
+            if (i < attackAmount - 1)
+                yield return new WaitForSeconds(0.5f);
+        }
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+
+        if (enemyIsDead)
+        {
+            state = BattleState.WON;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            PassTurn();
+        }
+    }
+
+    public IEnumerator FreyaFirstSkill()
+    {
+        freyaSkillPanel.SetActive(false);
+
+        int mpCost = 4;
+        if (player2Unit.curSP < mpCost)
+        {
+            Log.text = "Insufficient MP";
+            yield break;
+        }
+        
+        isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is using Skill!";
+
+        yield return new WaitForSeconds(1f);
+
+        player2Unit.UseMP(mpCost);
+
+        int HeroDamageOutput = 2 * (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+        bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+        enemyPanelAnimator.SetTrigger("On Hit");
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+
+        if (enemyIsDead)
+        {
+            state = BattleState.WON;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            PassTurn();
+        }
+    }
+
+    public IEnumerator MagnusFirstSkill()
+    {
+        magnusSkillPanel.SetActive(false);
+
+        int mpCost = 3;
+        if (player3Unit.curSP < mpCost)
+        {
+            Log.text = "Insufficient MP";
+            yield break;
+        }
+
+        isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is using Skill!";
+
+        yield return new WaitForSeconds(1f);
+
+        player3Unit.UseMP(mpCost);
+
+        if (player1Unit.isDead == false)
+            player1Unit.curSP += 2;
+
+        if (player2Unit.isDead == false)
+            player2Unit.curSP += 2;
+        
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+        PassTurn();
     }
 }
