@@ -628,10 +628,10 @@ public class Controller_Battle : MonoBehaviour
         player3Unit.UseMP(mpCost);
 
         if (player1Unit.isDead == false)
-            player1Unit.curSP += 2;
+            player1Unit.RestoreMP(2);
 
         if (player2Unit.isDead == false)
-            player2Unit.curSP += 2;
+            player2Unit.RestoreMP(2);
         
         // Wait before passing turn
         yield return new WaitForSeconds(1.25f);

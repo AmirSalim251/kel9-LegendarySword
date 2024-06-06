@@ -131,7 +131,8 @@ public class Controller_CharData : MonoBehaviour
 
     public void RestoreMP(int amount)
     {
-        panelAnimator.SetTrigger("OnRestoreMP");
+        // if (curSP < baseSP)
+            panelAnimator.SetTrigger("OnRestoreMP");
 
         curSP += amount;
         if (curSP > baseSP) 

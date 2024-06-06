@@ -24603,6 +24603,10 @@ PrefabInstance:
       propertyPath: itemTargetPanel
       value: 
       objectReference: {fileID: 781848413}
+    - target: {fileID: 1972018315430009302, guid: 0932270be592b364c8075f0594b8c401, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2750730402444394894, guid: 0932270be592b364c8075f0594b8c401, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -24673,6 +24677,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5049904188397680692, guid: 0932270be592b364c8075f0594b8c401, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6339619378681614802, guid: 0932270be592b364c8075f0594b8c401, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6342970025698865573, guid: 0932270be592b364c8075f0594b8c401, type: 3}

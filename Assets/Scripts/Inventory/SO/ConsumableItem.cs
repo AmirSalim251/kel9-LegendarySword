@@ -51,7 +51,7 @@ public class ConsumableItem : BaseItem
                 }
                 else if (charTarget.curHP != charTarget.baseHP)
                 {
-                    charTarget.curHP += effectHP;
+                    charTarget.Heal(effectHP);
                     isItemUsed = true;
                 }
 
@@ -62,7 +62,7 @@ public class ConsumableItem : BaseItem
                 }
                 else if(charTarget.curSP != charTarget.baseSP)
                 {
-                    charTarget.curSP += effectSP;
+                    charTarget.RestoreMP(effectSP);
                     isItemUsed = true;
                 }
 
