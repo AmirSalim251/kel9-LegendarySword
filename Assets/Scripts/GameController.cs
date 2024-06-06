@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour
     public GameObject combatUI;
     public GameObject endPanel;
 
+    public GameObject transitionPanel;
+
     [Space]
     public Controller_Score scoreController;
 
@@ -99,6 +101,11 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ButtonPauseAction();
+        }
+
+        if (endPanel.activeSelf && Input.anyKeyDown)
+        {
+            BackToMenu();
         }
     }
 

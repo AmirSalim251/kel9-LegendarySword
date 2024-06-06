@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Controller_StageSelection : MonoBehaviour
 {
+    public Controller_StageDetail stageDetail;
+
     public GameObject playerSprite;
     private Animator animator;
 
@@ -26,6 +29,7 @@ public class Controller_StageSelection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         //get animator
         animator = playerSprite.GetComponent<Animator>();
 
@@ -40,7 +44,31 @@ public class Controller_StageSelection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyUp(KeyCode.B))
+        {
+            StartCoroutine(SimulateButtonPress(btnBack.GetComponent<Button>()));
+            BackToMenu();
+        }
+
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            var isStage = EnterStage();
+            if (activeStage.GetComponent<Controller_StagePanel>().stageData != null)
+            {
+                isStage = true;
+            }
+            else
+            {
+                isStage = false;
+            }
+
+            if (isStage)
+            {
+                StartCoroutine(SimulateButtonPress(btnConfirm.GetComponent<Button>()));
+                /*stageDetailController.stageData = stageData;*/
+                stageDetail.OpenPanel();
+            }
+        }
     }
 
     public void SetupButtonTrigger()
@@ -119,7 +147,15 @@ public class Controller_StageSelection : MonoBehaviour
 
     public bool EnterStage()
     {
-        return true;
+        if(Controller_GameStage.Instance.stageChosen != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
     }
 
     private void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
@@ -129,5 +165,17 @@ public class Controller_StageSelection : MonoBehaviour
         eventTrigger.eventID = type;
         eventTrigger.callback.AddListener(action);
         trigger.triggers.Add(eventTrigger);
+    }
+
+    IEnumerator SimulateButtonPress(Button button)
+    {
+        ColorBlock colors = button.colors;
+
+        // Change to pressed color
+        button.image.CrossFadeColor(colors.pressedColor, colors.fadeDuration, true, true);
+        yield return new WaitForSeconds(colors.fadeDuration);
+
+        // Change back to normal color
+        button.image.CrossFadeColor(colors.normalColor, colors.fadeDuration, true, true);
     }
 }

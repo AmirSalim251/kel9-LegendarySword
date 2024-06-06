@@ -327,7 +327,7 @@ public class Controller_Battle : MonoBehaviour
             if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
             {
                 state = BattleState.LOST;
-                EndBattle();
+                StartCoroutine(EndBattle());
             }
             
         }
@@ -336,6 +336,7 @@ public class Controller_Battle : MonoBehaviour
     }
     IEnumerator EndBattle()
     {
+        AudioManager.Instance.bgmSource.Stop();
         if (state == BattleState.WON)
         {
             //scoring check
@@ -343,21 +344,51 @@ public class Controller_Battle : MonoBehaviour
             CheckPlayerDead();
 
             Log.text = "You Won!";
+            gameController.transitionPanel.SetActive(true);
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Left");
             yield return new WaitForSeconds(1f);
             Debug.Log("You won");
 
-            gameController.scoreController.CheckScore();
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+
+            gameController.scoreController.CheckScore(true);
 
             //switch from combatUI to resultPanel
             HideCombatUI();
-            gameController.endPanel.SetActive(true);
             
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Right");
+            gameController.transitionPanel.SetActive(false);
+
+            gameController.endPanel.SetActive(true);
+
         }
         else if (state == BattleState.LOST)
         {
+            //scoring check
+            CalculateHPDelta();
+            CheckPlayerDead();
+
             Log.text = "You Lose!";
-            yield return new WaitForSeconds(1f);
+            gameController.transitionPanel.SetActive(true);
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Left");
+            yield return new WaitForSeconds(2f);
             Debug.Log("You lose");
+
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+
+            gameController.scoreController.CheckScore(false);
+
+            //switch from combatUI to resultPanel
+            HideCombatUI();
+             
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Right");
+            
+
+            yield return new WaitForSeconds(1f);
+
+            gameController.transitionPanel.SetActive(false);
+            gameController.endPanel.SetActive(true);
         }
     }
 

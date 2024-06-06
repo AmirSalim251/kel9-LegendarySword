@@ -24,8 +24,11 @@ public class MainMenu : MonoBehaviour
 
     public void Start()
     {
+
         if(SessionManager.isNewSession)
         {
+            PlayerPrefs.DeleteAll();
+            panelStart.SetActive(true);
             HideMenuUI();
         }
         else
@@ -61,33 +64,27 @@ public class MainMenu : MonoBehaviour
         {
             if (Input.anyKeyDown)
             {
-                panelStart.SetActive(false);
-                ShowMenuUI();
                 SessionManager.isNewSession = false;
+                AudioManager.Instance.PlaySFX("buttonPressed");
+                StartCoroutine(ExitTitleScreen());
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            buttonQuit.onClick.Invoke();
+            StartCoroutine(SimulateButtonPress(buttonQuit));
             QuitGame();
         }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            buttonCredits.OnPointerDown(new PointerEventData(EventSystem.current));
-            buttonCredits.OnSubmit(new BaseEventData(EventSystem.current));
-            buttonCredits.OnPointerClick(new PointerEventData(EventSystem.current));
-        }
-        else if (Input.GetKeyUp(KeyCode.C))
-        {
-            buttonCredits.OnPointerUp(new PointerEventData(EventSystem.current));
-
+            StartCoroutine(SimulateButtonPress(buttonCredits));
+            GoToCredits();
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            buttonSettings.onClick.Invoke();
+            StartCoroutine(SimulateButtonPress(buttonSettings));
             ButtonSettings();
         }
     }
@@ -166,7 +163,14 @@ public class MainMenu : MonoBehaviour
         menuGroup.blocksRaycasts = true; // Enable raycasting
     }
 
-
+    IEnumerator ExitTitleScreen()
+    {
+        ShowMenuUI();
+        panelStart.GetComponent<Animator>().Play("FadeOut");
+        yield return new WaitForSeconds(1f);
+        panelStart.SetActive(false);
+        /*ShowMenuUI();*/
+    }
 
 
     private void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
@@ -178,6 +182,17 @@ public class MainMenu : MonoBehaviour
         trigger.triggers.Add(eventTrigger);
     }
 
+    IEnumerator SimulateButtonPress(Button button)
+    {
+        ColorBlock colors = button.colors;
+
+        // Change to pressed color
+        button.image.CrossFadeColor(colors.pressedColor, colors.fadeDuration, true, true);
+        yield return new WaitForSeconds(colors.fadeDuration);
+
+        // Change back to normal color
+        button.image.CrossFadeColor(colors.normalColor, colors.fadeDuration, true, true);
+    }
 }
 
 public static class SessionManager

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Controller_CreditsSwipe : MonoBehaviour
 {
@@ -18,15 +20,29 @@ public class Controller_CreditsSwipe : MonoBehaviour
     [Header("Buttons")]
     public GameObject prevButton;
     public GameObject nextButton;
+    public GameObject backButton;
 
     void Awake()
     {
+        maxPage = levelPagesRect.transform.childCount;
         currentPage = 1;
         targetPos = levelPagesRect.localPosition;
     }
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.RightArrow) && currentPage != maxPage)
+        {
+            Next();
+            StartCoroutine(SimulateButtonPress(nextButton.GetComponent<Button>()));
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && currentPage != 1)
+        {
+            Previous();
+            StartCoroutine(SimulateButtonPress(prevButton.GetComponent<Button>()));
+        }
+
         if (currentPage == 1)
         {
             prevButton.SetActive(false);
@@ -44,6 +60,7 @@ public class Controller_CreditsSwipe : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             BackToMenu();
+            StartCoroutine(SimulateButtonPress(backButton.GetComponent<Button>()));
         }
     }
 
@@ -79,4 +96,18 @@ public class Controller_CreditsSwipe : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+
+    IEnumerator SimulateButtonPress(Button button)
+    {
+        ColorBlock colors = button.colors;
+
+        // Change to pressed color
+        button.image.CrossFadeColor(colors.pressedColor, colors.fadeDuration, true, true);
+        yield return new WaitForSeconds(colors.fadeDuration);
+
+        // Change back to normal color
+        button.image.CrossFadeColor(colors.normalColor, colors.fadeDuration, true, true);
+    }
 }
+
+

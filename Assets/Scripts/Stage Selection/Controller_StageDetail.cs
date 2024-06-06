@@ -83,7 +83,11 @@ public class Controller_StageDetail : MonoBehaviour
     public void EnterButton()
     {
         Controller_GameStage.Instance.stageChosen = stageData;
-        SceneManager.LoadScene("VN Scene");
+        if (Controller_GameStage.Instance.stageChosen != null)
+        {
+            SceneManager.LoadScene("VN Scene");
+        }
+        
     }
 
 

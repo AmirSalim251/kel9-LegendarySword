@@ -35,6 +35,7 @@ public class Controller_EnemyData : MonoBehaviour
     {
         VFX.instance.Create(transform.position, damage.ToString(), monsterName);
         animator.SetTrigger("isHit");
+
         curHP -= damage;
 
         if (curHP <= 0)

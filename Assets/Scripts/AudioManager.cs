@@ -12,7 +12,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip stageSelectionSong;
     public AudioClip vnSong;
     public AudioClip combatSong;
-    public AudioClip resultSong;
+    public AudioClip winSong;
+    public AudioClip loseSong;
 
     [Header("SFX")]
     public Sound[] sfxSounds;

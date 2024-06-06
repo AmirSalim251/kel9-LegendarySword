@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Controller_Score : MonoBehaviour
 {
+    private bool isWin;
+
     public Controller_InventoryManager inventoryManager;
     public GameObject endPanel;
 
@@ -32,6 +34,16 @@ public class Controller_Score : MonoBehaviour
     public TMP_Text textScore3;*/
 
     [Header("Result Panel Text")]
+    public Image resultIndicator;
+    public Image resultSprite;
+
+    [Space]
+    public Sprite resultIndicatorWin;
+    public Sprite resultIndicatorLose;
+    public Sprite resultSpriteWin;
+    public Sprite resultSpriteLose;
+
+    [Space]
     public List<TMP_Text> objectiveText;
     /*public TMP_Text resultObj1;
     public TMP_Text resultObj2;
@@ -54,6 +66,7 @@ public class Controller_Score : MonoBehaviour
     private int rewardAmount;
     public TMP_Text rewardAmountText;
     public Image rewardIcon;
+    public TMP_Text rewardTimesText;
 
     private int totalScore;
 
@@ -138,8 +151,10 @@ public class Controller_Score : MonoBehaviour
         
     }
 
-    public void CheckScore()
+    public void CheckScore(bool battleResult)
     {
+        isWin = battleResult;
+
         int turnTaken = battleData.turnCount;
         var hpLost = battleData.totalHPDelta;
         int totalCharDead = battleData.totalCharDead;
@@ -176,27 +191,34 @@ public class Controller_Score : MonoBehaviour
             }
         }
 
-        rewardAmount *= totalScore;
-        rewardAmountText.SetText(rewardAmount.ToString());
-
-        //add reward to inven
-
-        inventoryManager.AddItem(inventoryManager.itemDictionary.GetValueByKey(rewardName.ToString()), rewardAmount);
-
-        inventoryManager.SaveInventory();
-
-        /*if(scoreType1 == ScoreType.TurnTaken)
+        //set UI sprite
+        if (isWin)
         {
-            result1.SetText(turnTaken.ToString());
+            resultIndicator.sprite = resultIndicatorWin;
+            resultSprite.sprite = resultSpriteWin;
 
+            rewardAmount *= totalScore;
+            rewardAmountText.SetText(rewardAmount.ToString());
+
+            //add reward to inven
+            inventoryManager.AddItem(inventoryManager.itemDictionary.GetValueByKey(rewardName.ToString()), rewardAmount);
+
+            //save inven
+            inventoryManager.SaveInventory();
         }
-        else if(scoreType1 == ScoreType.HPLost)
+        else if (!isWin)
         {
-            result1.SetText(hpLost.ToString());
+            resultIndicator.sprite = resultIndicatorLose;
+            resultSprite.sprite = resultSpriteLose;
+
+            rewardIcon.gameObject.SetActive(false);
+            rewardNameText.SetText("—");
+            rewardTimesText.gameObject.SetActive(false);
+            rewardAmountText.gameObject.SetActive(false);
         }
-        else if(scoreType1 == ScoreType.NoCharDeath)
-        {
-            result1.SetText(anyCharDead.ToString());
-        }*/
+
+        
+
+       
     }
 }

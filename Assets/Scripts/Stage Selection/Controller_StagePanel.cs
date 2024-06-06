@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Controller_StagePanel : MonoBehaviour
 {
@@ -53,34 +54,6 @@ public class Controller_StagePanel : MonoBehaviour
         Controller_GameStage.Instance.stageChosen = stageData;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(Input.GetKeyUp(KeyCode.B))
-        {
-            stageController.BackToMenu();
-        }
-
-        if (Input.GetKeyUp(KeyCode.C))
-        {
-            var isStage = stageController.EnterStage();
-            if(stageController.activeStage.GetComponent<Controller_StagePanel>().stageData != null)
-            {
-                isStage = true;
-            }
-            else
-            {
-                isStage = false;
-            }
-
-            if (isStage)
-            {
-                /*stageDetailController.stageData = stageData;*/
-                stageDetailController.OpenPanel();
-            }
-        }
-    }
-
     private void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
     {
         EventTrigger trigger = obj.GetComponent<EventTrigger>();
@@ -89,4 +62,5 @@ public class Controller_StagePanel : MonoBehaviour
         eventTrigger.callback.AddListener(action);
         trigger.triggers.Add(eventTrigger);
     }
+
 }
