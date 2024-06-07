@@ -563,6 +563,7 @@ public class Controller_Battle : MonoBehaviour
             int HeroDamageOutput = (ActivePlayer.charATK * 3) - (ActiveEnemy.monsterDEF * 2);
             enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
             enemyPanelAnimator.SetTrigger("On Hit");
+            AudioManager.Instance.PlaySFX("playerHit");
             if (i < attackAmount - 1)
                 yield return new WaitForSeconds(0.5f);
         }
