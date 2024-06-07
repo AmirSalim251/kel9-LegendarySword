@@ -2328,6 +2328,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
+      propertyPath: sfxSounds.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
+      propertyPath: sfxSounds.Array.data[5].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 48480e32bd1cb2a4885ab926c390520c, type: 3}
+    - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
+      propertyPath: sfxSounds.Array.data[5].name
+      value: qteTrigger
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

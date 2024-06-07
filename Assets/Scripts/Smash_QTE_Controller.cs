@@ -57,6 +57,7 @@ public class Smash_QTE_Controller : MonoBehaviour
         {
             fillAmount += increaseRate;
             qteIndicator.fillAmount = fillAmount;
+            AudioManager.Instance.PlaySFX("qteTrigger");
             SetButtonPressedVisuals(true);
         }
         if(Input.GetKeyUp(input))
