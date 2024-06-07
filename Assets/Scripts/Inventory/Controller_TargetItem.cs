@@ -22,6 +22,7 @@ public class Controller_TargetItem : MonoBehaviour
         {
             if (itemSelected.item.UseItem(charData))
             {
+                AudioManager.Instance.PlaySFX("itemUsed");
                 Debug.Log(itemSelected.name + " used");
                 itemSelected.stacks -= 1;
                 if(itemSelected.stacks <= 0)

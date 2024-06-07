@@ -58,7 +58,11 @@ public class Controller_PanelItem : MonoBehaviour
     private void Start()
     {
         var obj = this.gameObject;
-        AddEvent(obj, EventTriggerType.PointerClick, delegate { OnClick(obj); });
+        if (inventoryManager.inventoryType == InvenType.ItemPouch)
+        {
+            AddEvent(obj, EventTriggerType.PointerClick, delegate { OnClick(obj); });
+        }
+        
         AddEvent(obj, EventTriggerType.PointerEnter, delegate { OnEnter(obj); });
         AddEvent(obj, EventTriggerType.PointerExit, delegate { OnExit(obj); });
         AddEvent(obj, EventTriggerType.BeginDrag, delegate { OnDragStart(obj); });
@@ -72,6 +76,9 @@ public class Controller_PanelItem : MonoBehaviour
         {
             itemTargetPanel.SetActive(false);
         }*/
+
+        //call SFX
+        AudioManager.Instance.PlaySFX("buttonHover");
 
         if (itemSlot.item != null)
         {
@@ -103,6 +110,9 @@ public class Controller_PanelItem : MonoBehaviour
         }*/
 
         /*swapTargetIndex = obj.transform.GetSiblingIndex();*/
+
+        //call sfx
+        AudioManager.Instance.PlaySFX("buttonHover");
 
         inventoryManager.SetItemSelected(obj);
 

@@ -39,6 +39,7 @@ public class ConsumableItem : BaseItem
 */
         /*Debug.Log("Used Consumable");*/
 
+        battleData = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
 
         switch (consumableType)
         {
@@ -50,7 +51,9 @@ public class ConsumableItem : BaseItem
                 }
                 else if (charTarget.curHP != charTarget.baseHP)
                 {
-                    charTarget.curHP += effectHP;
+                    if (effectHP > 0)
+                        charTarget.Heal(effectHP);
+
                     isItemUsed = true;
                 }
 
@@ -61,7 +64,10 @@ public class ConsumableItem : BaseItem
                 }
                 else if(charTarget.curSP != charTarget.baseSP)
                 {
-                    charTarget.curSP += effectSP;
+                    if (effectSP > 0)
+                        charTarget.RestoreMP(effectSP);
+
+                    charTarget.RestoreMP(effectSP);
                     isItemUsed = true;
                 }
 
@@ -72,8 +78,13 @@ public class ConsumableItem : BaseItem
                 {
                     charTarget.gameObject.SetActive(true);
                     charTarget.isDead = false;
-                    charTarget.curHP += effectHP;
+                    charTarget.Heal(effectHP);
+
+                    battleData.PlayerAlive = battleData.InsertPlayerAlive(battleData.PlayerAlive, charTarget.charID);
+
                     isItemUsed = true;
+
+                    battleData.InsertPlayerAlive(battleData.PlayerAlive, charTarget.charID);
 
                 }
                 else

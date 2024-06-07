@@ -3,22 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum BattleState { START, PLAYERTURN, PLAYER2TURN, PLAYER3TURN, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYER1TURN, PLAYER2TURN, PLAYER3TURN, ENEMYTURN, WON, LOST }
 
 public class Controller_Battle : MonoBehaviour
 {
+    public GameController gameController;
+
+    public GameObject combatUI;
+
     public TMP_Text Log;
 
-    public GameObject P1UI;
-    public GameObject P2UI;
-    public GameObject P3UI;
-
-    int turnCount;
-    public TMP_Text turnCounter;
+    public PlayerPanel P1UI;
+    public PlayerPanel P2UI;
+    public PlayerPanel P3UI;
 
     Controller_CharData ActivePlayer;
     Controller_EnemyData ActiveEnemy;
@@ -41,6 +43,22 @@ public class Controller_Battle : MonoBehaviour
 
     bool isActionAllowed;
     public bool qteCheck;
+    public Animator enemyPanelAnimator;
+    public GameObject alexSkillPanel, freyaSkillPanel, magnusSkillPanel;
+
+    [Header("Objective")]
+    public int turnCount;
+    public TMP_Text turnCounter;
+
+    public int totalHP;
+    public float totalHPDelta;
+
+    public int totalCharDead;
+
+    /*void Awake()
+    {
+        combatUI = GameObject.FindGameObjectWithTag("CombatUI");
+    }*/
 
     // Start is called before the first frame update
     void Start()
@@ -55,7 +73,6 @@ public class Controller_Battle : MonoBehaviour
     void Update()
     {
         turnCounter.SetText(turnCount.ToString());
-        CheckTurn();
     }
     IEnumerator SetupBattle()
     {
@@ -77,12 +94,14 @@ public class Controller_Battle : MonoBehaviour
         Log.text = "Game Start";
 
         turnCount = 0;
-        state = BattleState.PLAYERTURN;
+        state = BattleState.PLAYER1TURN;
+        P1UI.MoveUp();
         PlayerTurn();
     }
 
     IEnumerator QTEEvent()
     {
+        isActionAllowed = false;
         Log.text = "Press 'A' key repeatedly to attack!";
         Debug.Log("Press 'A' key repeatedly to attack!");
         qteController.enabled = true;
@@ -96,33 +115,28 @@ public class Controller_Battle : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator HeroAttack()
+    public IEnumerator PlayerAttack()
     {
         isActionAllowed = false;
-
-        yield return new WaitForSeconds(2f);
-        
-        int HeroDamageOutput = 0;
-        HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
-        /*ActiveEnemy.GetComponent<Controller_EnemyData>().curHP -= HeroDamageOutput;*/
-
-        bool isDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
-
         Log.text = ActivePlayer.charName + " is attacking!";
 
         yield return new WaitForSeconds(1f);
-        if (ActiveEnemy.baseHP != ActiveEnemy.curHP)
-        {
-            Debug.Log("Attack berhasil");
-            Debug.Log("Damage dihasilkan: " + HeroDamageOutput);
-            Debug.Log("Sisa HP " + ActiveEnemy.monsterName + ": " + ActiveEnemy.curHP);
-        }
-        else
-        {
-            Debug.Log("Attack gagal");
-        }
 
-        if (isDead)
+        enemyPanelAnimator.SetTrigger("On Hit");
+
+        AudioManager.Instance.PlaySFX("playerHit");
+
+        int HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+        bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+
+        Debug.Log("Attack berhasil");
+        Debug.Log("Damage dihasilkan: " + HeroDamageOutput);
+        Debug.Log("Sisa HP " + ActiveEnemy.monsterName + ": " + ActiveEnemy.curHP);
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+
+        if (enemyIsDead)
         {
             state = BattleState.WON;
             StartCoroutine(EndBattle());
@@ -133,38 +147,16 @@ public class Controller_Battle : MonoBehaviour
         }
     }
 
-    IEnumerator HeroDefend()
+    IEnumerator PlayerDefend()
     {
         isActionAllowed = false;
         Log.text = ActivePlayer.charName + " is trying to block!";
 
         yield return new WaitForSeconds(1f);
-        
+
         ActivePlayer.Blocking();
-
-        /*if (state == BattleState.PLAYERTURN)
-        {
-            state = BattleState.PLAYER2TURN;
-            ActivePlayer = player2Unit;
-            PlayerTurn();
-        }
-        else if (state == BattleState.PLAYER2TURN)
-        {
-            state = BattleState.PLAYER3TURN;
-            ActivePlayer = player3Unit;
-            PlayerTurn();
-        }
-        else
-        {
-            state = BattleState.ENEMYTURN;
-            ActivePlayer = player1Unit;
-            StartCoroutine(EnemyTurn());
-        }*/
-
         PassTurn();
-
         yield return new WaitForSeconds(1f);
-
     }
 
     public void HeroBlunder()
@@ -177,48 +169,24 @@ public class Controller_Battle : MonoBehaviour
         isActionAllowed = true;
         Debug.Log("Turn: " + ActivePlayer.charName);
         Log.text = ActivePlayer.charName + "'s turn!";
-        if (state == BattleState.PLAYERTURN)
-        {
-            P1UI.transform.position += new Vector3(0, 40f, 0);
-        }
-
-    }
-
-    void CheckTurn()
-    {
-        /*if (state == BattleState.PLAYERTURN)
-        {
-            P1UI.transform.position += new Vector3(0, 5f, 0);
-        }*/
     }
 
     public void PassTurn()
     {
-        if (state == BattleState.PLAYERTURN)
+        if (state == BattleState.PLAYER1TURN)
         {
-            P1UI.transform.position -= new Vector3(0, 40f, 0);
+            P1UI.MoveDown();
+
             if (!player2Unit.isDead)
             {
-                P2UI.transform.position += new Vector3(0, 40f, 0);
+                P2UI.MoveUp();
                 state = BattleState.PLAYER2TURN;
                 ActivePlayer = player2Unit;
                 PlayerTurn();
             }
-            else
+            else if (!player3Unit.isDead)
             {
-                P3UI.transform.position += new Vector3(0, 40f, 0);
-                state = BattleState.PLAYER3TURN;
-                ActivePlayer = player3Unit;
-                PlayerTurn();
-            }
-
-        }
-        else if (state == BattleState.PLAYER2TURN)
-        {
-            P2UI.transform.position -= new Vector3(0, 40f, 0);
-            if (!player3Unit.isDead)
-            {
-                P3UI.transform.position += new Vector3(0, 40f, 0);
+                P3UI.MoveUp();
                 state = BattleState.PLAYER3TURN;
                 ActivePlayer = player3Unit;
                 PlayerTurn();
@@ -226,27 +194,57 @@ public class Controller_Battle : MonoBehaviour
             else
             {
                 state = BattleState.ENEMYTURN;
-                ActivePlayer = player1Unit;
                 StartCoroutine(EnemyTurn());
             }
         }
-        else
+
+        else if (state == BattleState.PLAYER2TURN)
         {
-            P3UI.transform.position -= new Vector3(0, 40f, 0);
-            state = BattleState.ENEMYTURN;
-            if (player1Unit.isDead)
+            P2UI.MoveDown();
+
+            if (!player3Unit.isDead)
             {
-                ActivePlayer = player2Unit;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                }
+                P3UI.MoveUp();
+                state = BattleState.PLAYER3TURN;
+                ActivePlayer = player3Unit;
+                PlayerTurn();
             }
             else
             {
+                state = BattleState.ENEMYTURN;
+                StartCoroutine(EnemyTurn());
+            }
+        }
+
+        else if (state == BattleState.PLAYER3TURN)
+        {
+            P3UI.MoveDown();
+
+            state = BattleState.ENEMYTURN;
+            StartCoroutine(EnemyTurn());
+        }
+
+        else if (state == BattleState.ENEMYTURN)
+        {
+            if (!player1Unit.isDead)
+            {
+                P1UI.MoveUp();
+                state = BattleState.PLAYER1TURN;
                 ActivePlayer = player1Unit;
             }
-            StartCoroutine(EnemyTurn());
+            else if (!player2Unit.isDead)
+            {
+                P2UI.MoveUp();
+                state = BattleState.PLAYER2TURN;
+                ActivePlayer = player2Unit;
+            }
+            else if (!player3Unit.isDead)
+            {
+                P3UI.MoveUp();
+                state = BattleState.PLAYER3TURN;
+                ActivePlayer = player3Unit;
+            }
+            PlayerTurn();
         }
     }
 
@@ -258,59 +256,50 @@ public class Controller_Battle : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        /*int RandomTarget = UnityEngine.Random.Range(1, 4);*/
-        /*int RandomTarget = UnityEngine.Random.Range(PlayerAlive.Min(), PlayerAlive.Max());
-
-        if (RandomTarget == 1)
+        //Randomizing target for enemy to attack
+        while (true)
         {
-            if(player1Unit.isDead)
+            int RandomTargetIndex = UnityEngine.Random.Range(0, PlayerAlive.Length);
+            int RandomTargetVal = PlayerAlive[RandomTargetIndex];
+            Debug.Log(RandomTargetVal);
+
+            if (RandomTargetVal == 1)
             {
-                RandomTarget = UnityEngine.Random.Range(2, 4);
-                if (RandomTarget == 2)
+                if (!player1Unit.isDead)
                 {
-                    ActiveTarget = player2Unit;
-                }
-                else if (RandomTarget == 3)
-                {
-                    ActiveTarget = player3Unit;
+                    ActiveTarget = player1Unit;
+                    break;
                 }
             }
-            ActiveTarget = player1Unit;
-        }
-        else if (RandomTarget == 2)
-        {
-            ActiveTarget = player2Unit;
-        }
-        else if (RandomTarget == 3)
-        {
-            ActiveTarget = player3Unit;
-        }*/
-
-        int RandomTargetIndex = UnityEngine.Random.Range(0, PlayerAlive.Length-1);
-        int RandomTargetVal = PlayerAlive[RandomTargetIndex];
-
-        Debug.Log(RandomTargetVal);
-
-        if (RandomTargetVal == 1)
-        {
-            ActiveTarget = player1Unit;
-        }
-        else if (RandomTargetVal == 2)
-        {
-            ActiveTarget = player2Unit;
-        }
-        else if (RandomTargetVal == 3)
-        {
-            ActiveTarget = player3Unit;
+            else if (RandomTargetVal == 2)
+            {
+                if (!player2Unit.isDead)
+                {
+                    ActiveTarget = player2Unit;
+                    break;
+                }
+            }
+            else if (RandomTargetVal == 3)
+            {
+                if (!player3Unit.isDead)
+                {
+                    ActiveTarget = player3Unit;
+                    break;
+                }
+            }
         }
 
-
-        Debug.Log("Enemy targetted: " + ActiveTarget.charName);
         Log.text = "Enemy is attacking " + ActiveTarget.charName;
 
         if (ActiveTarget.isBlocking == false)
         {
+            
             ActiveEnemy.animator.SetTrigger("isAttack");
+
+            // Wait for the attack animation
+            yield return new WaitForSeconds(0.85f);
+
+            AudioManager.Instance.PlaySFX("enemyHit");
 
             int EnemyDamageOutput = (ActiveEnemy.monsterATK * 4) - (ActiveTarget.charDEF * 2);
             ActiveTarget.isDead = ActiveTarget.TakeDamage(EnemyDamageOutput);
@@ -318,108 +307,104 @@ public class Controller_Battle : MonoBehaviour
             Debug.Log("Attack berhasil");
             Debug.Log("Damage dihasilkan: " + EnemyDamageOutput);
             Debug.Log("Sisa HP " + ActiveTarget.charName + ": " + ActiveTarget.curHP);
+
         }
         else if (ActiveTarget.isBlocking == true)
         {
             Debug.Log("Attack dihentikan");
             Log.text = ActiveTarget.charName + " blocked enemy's attack!";
-        }
-        
-        /*playerHUD.SetHP(playerUnit.currentHP);*/
 
-        yield return new WaitForSeconds(1f);
+            //reset target block state to false
+            ActiveTarget.isBlocking = false;
+        }
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
 
         if (ActiveTarget.isDead)
         {
-            ActiveTarget.gameObject.SetActive(false);
-            ActiveTarget.curSP = 0;
+            Remove(ActiveTarget);
 
-            int PlayerDead = ActiveTarget.charID;
-            int[] UpdatePlayerAlive = PlayerAlive.Where(val => val != PlayerDead).ToArray();
-            PlayerAlive = UpdatePlayerAlive;
-            
             if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
             {
                 state = BattleState.LOST;
-                EndBattle();
-            }
-            else
-            {
-                if (player1Unit.isDead)
-            {
-                ActivePlayer = player2Unit;
-                state = BattleState.PLAYER2TURN;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                    state = BattleState.PLAYER3TURN;
-                }
-            }
-            else
-            {
-                ActivePlayer = player1Unit;
-                state = BattleState.PLAYERTURN;
-
-            }
-                PlayerTurn();
+                StartCoroutine(EndBattle());
             }
             
         }
-        else
-        {
-            if (player1Unit.isDead)
-            {
-                ActivePlayer = player2Unit;
-                state = BattleState.PLAYER2TURN;
-                if (player2Unit.isDead)
-                {
-                    ActivePlayer = player3Unit;
-                    state = BattleState.PLAYER3TURN;
-                }
-            }
-            else
-            {
-                ActivePlayer = player1Unit;
-                state = BattleState.PLAYERTURN;
-
-            }
-            PlayerTurn();
-        }
+        PassTurn();
         turnCount++;
-
-
     }
-
     IEnumerator EndBattle()
     {
+        AudioManager.Instance.bgmSource.Stop();
         if (state == BattleState.WON)
         {
+            //scoring check
+            CalculateHPDelta();
+            CheckPlayerDead();
+
             Log.text = "You Won!";
+            gameController.transitionPanel.SetActive(true);
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Left");
             yield return new WaitForSeconds(1f);
             Debug.Log("You won");
+
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+
+            gameController.scoreController.CheckScore(true);
+
+            //switch from combatUI to resultPanel
+            HideCombatUI();
             
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Right");
+            gameController.transitionPanel.SetActive(false);
+
+            gameController.endPanel.SetActive(true);
+
         }
         else if (state == BattleState.LOST)
         {
+            //scoring check
+            CalculateHPDelta();
+            CheckPlayerDead();
+
             Log.text = "You Lose!";
-            yield return new WaitForSeconds(1f);
+            gameController.transitionPanel.SetActive(true);
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Left");
+            yield return new WaitForSeconds(2f);
             Debug.Log("You lose");
+
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+
+            gameController.scoreController.CheckScore(false);
+
+            //switch from combatUI to resultPanel
+            HideCombatUI();
+             
+            gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Right");
+            
+
+            yield return new WaitForSeconds(1f);
+
+            gameController.transitionPanel.SetActive(false);
+            gameController.endPanel.SetActive(true);
         }
-        SceneManager.LoadScene("MainMenu");
     }
 
     public void OnAttackButton()
     {
         if (!isActionAllowed)
             return;
-        if (state == BattleState.PLAYERTURN)
+        if (state == BattleState.PLAYER1TURN)
         {
             StartCoroutine(QTEEvent());
             // qteController.enabled = false;
         }
         else
         {
-            StartCoroutine(HeroAttack());
+            StartCoroutine(PlayerAttack());
         }
         
     }
@@ -428,8 +413,228 @@ public class Controller_Battle : MonoBehaviour
     {
         if (!isActionAllowed)
             return;
-        StartCoroutine(HeroDefend());
+        StartCoroutine(PlayerDefend());
     }
 
     
+    public void CalculateHPDelta()
+    {
+        totalHP = player1Unit.baseHP + player2Unit.baseHP + player3Unit.baseHP;
+        int totalHPMinus = player1Unit.curHP + player2Unit.curHP + player3Unit.curHP;
+        Debug.Log("total HP" + totalHP);
+        Debug.Log("HP minus" + totalHPMinus);
+
+        totalHPDelta = ((float)(totalHP - totalHPMinus) / totalHP) * 100;
+        totalHPDelta = (float)Math.Floor(totalHPDelta);
+
+        Debug.Log(totalHPDelta);
+        /*totalHPDelta = totalHPDelta / totalHP * 100;*/
+    }
+
+    public void HideCombatUI()
+    {
+        CanvasGroup combatUIGroup = combatUI.GetComponent<CanvasGroup>();
+
+        combatUIGroup.alpha = 0f; // Make UI element invisible
+        combatUIGroup.interactable = false; // Disable interaction
+        combatUIGroup.blocksRaycasts = false; // Disable raycasting
+    }
+
+    public void ShowCombatUI()
+    {
+        CanvasGroup combatUIGroup = combatUI.GetComponent<CanvasGroup>();
+
+        combatUIGroup.alpha = 1.0f; // Make UI element visible
+        combatUIGroup.interactable = true; // Enable interaction
+        combatUIGroup.blocksRaycasts = true; // Enable raycasting
+    }
+
+
+
+    public void CheckPlayerDead()
+    {
+        if (player1Unit.isDead == true)
+        {
+            totalCharDead++;
+        }
+        
+        if (player2Unit.isDead == true)
+        {
+            totalCharDead++;
+        }
+
+        if (player3Unit.isDead == true)
+        {
+            totalCharDead++;
+        }
+    }
+
+    public int[] InsertPlayerAlive(int[] originalArray, int newElement)
+    {
+        int x = (newElement - 1);
+        int[] newArray = new int[originalArray.Length + 1];
+
+        // Copy elements up to the newElement's position
+        for (int i = 0; i < x; i++)
+        {
+            newArray[i] = originalArray[i];
+        }
+
+        // Insert the new element
+        newArray[x] = newElement;
+
+        // Copy the remaining elements
+        for (int i = x; i < originalArray.Length; i++)
+        {
+            newArray[i + 1] = originalArray[i];
+        }
+
+        return newArray;
+    }
+
+    void Remove(Controller_CharData Character)
+    {
+        ActiveTarget.curSP = 0;
+        ActiveTarget.gameObject.SetActive(false);
+
+        //updating playerAlive
+        int PlayerDead = ActiveTarget.charID;
+        int[] UpdatePlayerAlive = PlayerAlive.Where(val => val != PlayerDead).ToArray();
+        PlayerAlive = UpdatePlayerAlive;
+
+        if (Character.charName == "Alex") P1UI.Die();
+        else if (Character.charName == "Freya") P2UI.Die();
+        else if (Character.charName == "Magnus") P3UI.Die();
+    }
+    public void OnSkillButton()
+    {
+        if (ActivePlayer == player1Unit)
+            alexSkillPanel.SetActive(true);
+        
+        else if (ActivePlayer == player2Unit)
+            freyaSkillPanel.SetActive(true);
+
+        else if (ActivePlayer == player3Unit)
+            magnusSkillPanel.SetActive(true);
+    }
+
+    public void SelectFirstSkill()
+    {
+        if (ActivePlayer == player1Unit)
+            StartCoroutine(AlexFirstSkill());
+        
+        else if (ActivePlayer == player2Unit)
+            StartCoroutine(FreyaFirstSkill());
+
+        else if (ActivePlayer == player3Unit)
+            StartCoroutine(MagnusFirstSkill());
+    }
+
+    public IEnumerator AlexFirstSkill()
+    {
+        alexSkillPanel.SetActive(false);
+
+        int mpCost = player1Unit.baseSP;
+        if (player1Unit.curSP < mpCost)
+        {
+            Log.text = "Insufficient MP";
+            yield break;
+        }
+
+        isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is using Skill!";
+
+        yield return new WaitForSeconds(1f);
+
+        player1Unit.UseMP(mpCost); 
+        int attackAmount = UnityEngine.Random.Range(3, 6);
+        bool enemyIsDead = false;
+
+        for (int i = 0; i < attackAmount; i++)
+        {
+            int HeroDamageOutput = 2 * (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+            enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+            enemyPanelAnimator.SetTrigger("On Hit");
+            if (i < attackAmount - 1)
+                yield return new WaitForSeconds(0.5f);
+        }
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+
+        if (enemyIsDead)
+        {
+            state = BattleState.WON;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            PassTurn();
+        }
+    }
+
+    public IEnumerator FreyaFirstSkill()
+    {
+        freyaSkillPanel.SetActive(false);
+
+        int mpCost = 4;
+        if (player2Unit.curSP < mpCost)
+        {
+            Log.text = "Insufficient MP";
+            yield break;
+        }
+        
+        isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is using Skill!";
+
+        yield return new WaitForSeconds(1f);
+
+        player2Unit.UseMP(mpCost);
+
+        int HeroDamageOutput = 2 * (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+        bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+        enemyPanelAnimator.SetTrigger("On Hit");
+
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+
+        if (enemyIsDead)
+        {
+            state = BattleState.WON;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            PassTurn();
+        }
+    }
+
+    public IEnumerator MagnusFirstSkill()
+    {
+        magnusSkillPanel.SetActive(false);
+
+        int mpCost = 3;
+        if (player3Unit.curSP < mpCost)
+        {
+            Log.text = "Insufficient MP";
+            yield break;
+        }
+
+        isActionAllowed = false;
+        Log.text = ActivePlayer.charName + " is using Skill!";
+
+        yield return new WaitForSeconds(1f);
+
+        player3Unit.UseMP(mpCost);
+
+        if (player1Unit.isDead == false)
+            player1Unit.RestoreMP(2);
+
+        if (player2Unit.isDead == false)
+            player2Unit.RestoreMP(2);
+        
+        // Wait before passing turn
+        yield return new WaitForSeconds(1.25f);
+        PassTurn();
+    }
 }

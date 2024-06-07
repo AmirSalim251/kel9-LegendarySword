@@ -12,6 +12,12 @@ TagManager:
   - QTEController
   - CameraController
   - RTController
+  - BGM Volume Slider
+  - SFX Volume Slider
+  - InventorySystem
+  - ScoreController
+  - CombatUI
+  - GameControler
   layers:
   - Default
   - TransparentFX
@@ -21,7 +27,7 @@ TagManager:
   - UI
   - Player
   - Environment
-  - 
+  - Popup
   - 
   - 
   - 

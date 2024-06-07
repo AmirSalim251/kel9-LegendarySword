@@ -6,12 +6,15 @@ using UnityEngine.UI;
 
 public class Controller_Parameter : MonoBehaviour
 {
+    private Controller_Battle battleController;
+
+    [Header("Enemy")]
     public TMP_Text EnemyName;
     public Image EnemyHealthBar;
     public float EnemyHealthAmount;
     public float EnemyHealthMax;
 
-    [Space]
+    [Header("P1")]
     public TMP_Text P1Name;
     public TMP_Text P1TargetItem;
     public Image Player1HealthBar;
@@ -22,8 +25,9 @@ public class Controller_Parameter : MonoBehaviour
     public float Player1SPAmount;
     public TMP_Text Player1SPAmountText;
     public float Player1SPMax;
+    private GameObject P1UIGroup;
 
-    [Space]
+    [Header("P2")]
     public TMP_Text P2Name;
     public TMP_Text P2TargetItem;
     public Image Player2HealthBar;
@@ -34,8 +38,9 @@ public class Controller_Parameter : MonoBehaviour
     public float Player2SPAmount;
     public TMP_Text Player2SPAmountText;
     public float Player2SPMax;
+    private GameObject P2UIGroup;
 
-    [Space]
+    [Header("P3")]
     public TMP_Text P3Name;
     public TMP_Text P3TargetItem;
     public Image Player3HealthBar;
@@ -46,11 +51,16 @@ public class Controller_Parameter : MonoBehaviour
     public float Player3SPAmount;
     public TMP_Text Player3SPAmountText;
     public float Player3SPMax;
+    private GameObject P3UIGroup;
+
+    [Header("Misc")]
+    public Material grayScaleShader;
+    public Sprite CrossDeadEffect;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        battleController = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
     }
 
     // Update is called once per frame
@@ -111,9 +121,9 @@ public class Controller_Parameter : MonoBehaviour
         Player2SPAmountText.SetText(Player2SPAmount.ToString());
         Player3SPAmountText.SetText(Player3SPAmount.ToString());
 
-        Player1SPBar.fillAmount = Player1SPMax / Player1SPAmount;
-        Player2SPBar.fillAmount = Player2SPMax / Player2SPAmount;
-        Player3SPBar.fillAmount = Player3SPMax / Player3SPAmount;
+        Player1SPBar.fillAmount = Player1SPAmount / Player1SPMax;
+        Player2SPBar.fillAmount = Player2SPAmount / Player2SPMax;
+        Player3SPBar.fillAmount = Player3SPAmount / Player3SPMax;
     }
 
     void GetPlayerName()
@@ -126,4 +136,52 @@ public class Controller_Parameter : MonoBehaviour
         P2TargetItem.text = Controller_Battle.player2Unit.charName;
         P3TargetItem.text = Controller_Battle.player3Unit.charName;
     }
+
+    /*void PlayerDeadEffect(string playerUnit)
+    {
+        if (playerUnit.Equals("P1"))
+        {
+            ChangeMaterialRecursively(P1UIGroup.GetComponent<Transform>(), grayScaleShader);
+        }
+        else if (playerUnit.Equals("P2"))
+        {
+            ChangeMaterialRecursively(P2UIGroup.GetComponent<Transform>(), grayScaleShader);
+        }
+        else if (playerUnit.Equals("P3"))
+        {
+            ChangeMaterialRecursively(P3UIGroup.GetComponent<Transform>(), grayScaleShader);
+        }
+    }
+
+    void PlayerAliveEffect(Controller_CharData playerUnit)
+    {
+        if (playerUnit.tag.Equals("P1"))
+        {
+            ChangeMaterialRecursively(P1UIGroup.GetComponent<Transform>(), null);
+        }
+        else if (playerUnit.tag.Equals("P2"))
+        {
+            ChangeMaterialRecursively(P2UIGroup.GetComponent<Transform>(), null);
+        }
+        else if (playerUnit.tag.Equals("P3"))
+        {
+            ChangeMaterialRecursively(P3UIGroup.GetComponent<Transform>(), null);
+        }
+    }
+
+    void ChangeMaterialRecursively(Transform parent, Material material)
+    {
+        // Ganti material dari GameObject
+        Renderer renderer = parent.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            renderer.material = material;
+        }
+
+        // Lakukan secara rekursif untuk tiap child
+        foreach (Transform child in parent)
+        {
+            ChangeMaterialRecursively(child, material);
+        }
+    }*/
 }

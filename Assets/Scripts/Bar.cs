@@ -2,26 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class Bar : MonoBehaviour
 {
     public Image bar;
     public GameObject bg;
     public GameObject scrController;
-    public GameObject cube;
-    public GameObject mainCamObj;
-    public CameraController mainCam;
+    public GameObject player;
     Controller_Battle ControllerBattle;
     Controller_RT rtController;
 
     public float timeLimit = 5f; // Total time to decrease the bar to zero
     public float fillAmount = 1f; // Initial fill amount (1.0 = 100%, 0.5 = 50%)
 
-    private Vector3 cubeInitialPosition;
-    private Quaternion cubeInitialRotation;
-    private Rigidbody cubeRigidbody;
+    private Vector3 playerInitialPosition;
+    private Quaternion playerInitialRotation;
+    private Rigidbody playerRigidbody;
 
-    // Start is called before the first frame update
     void Start()
     {
         rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
@@ -29,12 +27,11 @@ public class Bar : MonoBehaviour
 
         bar.fillAmount = fillAmount;
         
-        cubeInitialPosition = cube.transform.position;
-        cubeInitialRotation = cube.transform.rotation;
-        cubeRigidbody = cube.GetComponent<Rigidbody>();
+        playerInitialPosition = player.transform.position;
+        playerInitialRotation = player.transform.rotation;
+        playerRigidbody = player.GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (fillAmount > 0)
@@ -44,21 +41,23 @@ public class Bar : MonoBehaviour
 
             if (fillAmount <= 0)
             {
-                OnBarDepleted();
+                StartCoroutine(OnBarDepleted());
             }
         }
     }
 
-    void OnBarDepleted()
+    IEnumerator OnBarDepleted()
     {
         // Deactivate character controller
         scrController.SetActive(false);
-        mainCam.GoBackToDefault();
+
+        yield return new WaitForSeconds(1.25f);
+
         bg.SetActive(false);
         rtController.enabled = false;
-
-        // Reset cube position and rotation
-        ResetCubePosition();
+        
+        // Reset player position and rotation
+        ResetplayerPosition();
         ControllerBattle.PassTurn();
 
         // Reset fillAmount for next use if needed
@@ -66,11 +65,9 @@ public class Bar : MonoBehaviour
         bar.fillAmount = fillAmount;
     }
 
-    void ResetCubePosition()
+    void ResetplayerPosition()
     {
-        cubeRigidbody.constraints = RigidbodyConstraints.None; // Remove constraints temporarily
-        cube.transform.position = cubeInitialPosition;
-        cube.transform.rotation = cubeInitialRotation;
-        cubeRigidbody.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation; // Apply constraints
+        player.transform.position = playerInitialPosition;
+        player.transform.rotation = playerInitialRotation;
     }
 }
