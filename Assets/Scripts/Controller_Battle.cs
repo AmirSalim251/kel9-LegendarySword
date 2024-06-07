@@ -27,7 +27,7 @@ public class Controller_Battle : MonoBehaviour
 
     Controller_CharData ActiveTarget;
 
-    A_Smash_QTE_Controller qteController;
+    Smash_QTE_Controller qteController;
     Controller_RT rtController;
     
 
@@ -63,7 +63,7 @@ public class Controller_Battle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
+        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<Smash_QTE_Controller>();
         rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
         qteCheck = false;
         StartCoroutine(SetupBattle());

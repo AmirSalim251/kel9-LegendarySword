@@ -4,9 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class A_Smash_QTE_Controller : MonoBehaviour
+public class Smash_QTE_Controller : MonoBehaviour
 {
-    A_Smash_QTE_Controller qteController;
+    Smash_QTE_Controller qteController;
     
     Controller_Battle ControllerBattle;
     public float currentTime = 0f;
@@ -16,12 +16,14 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     public float increaseRate = 0.2f;
 
     public Image qteIndicator;
-    public Image qteButton;
+    public KeyCode input;
+    public Image button_After;
+    public Image button_Before;
 
     void Awake()
     {   
         ControllerBattle = GameObject.FindGameObjectWithTag("BattleController").GetComponent<Controller_Battle>();
-        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<A_Smash_QTE_Controller>();
+        qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<Smash_QTE_Controller>();
         qteIndicator.fillAmount = 0f;
     }
 
@@ -29,21 +31,33 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     {
         currentTime = 0;
         fillAmount = 0;
-        qteButton.enabled = true;
+        button_Before.enabled = true;
     }
 
     void Update()
     {
         currentTime += Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(input))
         {
             fillAmount += increaseRate;
             qteIndicator.fillAmount = fillAmount;
+            button_After.enabled = true;
+            button_Before.enabled = false;
+        }
+        if(Input.GetKeyUp(input))
+        {
+            button_After.enabled = false;
+            button_Before.enabled = true;
         }
 
         fillAmount -= decreaseRate;
         qteIndicator.fillAmount = fillAmount;
+        
+        if (fillAmount < 0)
+        {
+            fillAmount = 0;
+        }
 
         if (fillAmount >= 1f)
         {
@@ -52,7 +66,8 @@ public class A_Smash_QTE_Controller : MonoBehaviour
             qteIndicator.fillAmount = 0;
             
             qteController.enabled = false;
-            qteButton.enabled = false;
+            button_Before.enabled = false;
+            button_After.enabled = false;
             StartCoroutine(ControllerBattle.PlayerAttack());            
         }
 
@@ -64,7 +79,8 @@ public class A_Smash_QTE_Controller : MonoBehaviour
             qteIndicator.fillAmount = 0;
 
             qteController.enabled = false;
-            qteButton.enabled = false;
+            button_Before.enabled = false;
+            button_After.enabled = false;
             ControllerBattle.PassTurn();
         }
     }
