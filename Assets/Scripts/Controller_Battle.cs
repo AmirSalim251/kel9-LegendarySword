@@ -55,6 +55,8 @@ public class Controller_Battle : MonoBehaviour
 
     public int totalCharDead;
 
+    public bool isAlexUsingSkill = false;
+
     /*void Awake()
     {
         combatUI = GameObject.FindGameObjectWithTag("CombatUI");
@@ -521,7 +523,20 @@ public class Controller_Battle : MonoBehaviour
     public void SelectFirstSkill()
     {
         if (ActivePlayer == player1Unit)
-            StartCoroutine(AlexFirstSkill());
+        {
+            alexSkillPanel.SetActive(false);
+
+            int mpCost = player1Unit.baseSP;
+            if (player1Unit.curSP < mpCost)
+            {
+                Log.text = "Insufficient MP";
+                return;
+            }
+
+            isAlexUsingSkill = true;
+            StartCoroutine(QTEEvent());            
+        }
+            
         
         else if (ActivePlayer == player2Unit)
             StartCoroutine(FreyaFirstSkill());
@@ -532,14 +547,7 @@ public class Controller_Battle : MonoBehaviour
 
     public IEnumerator AlexFirstSkill()
     {
-        alexSkillPanel.SetActive(false);
-
         int mpCost = player1Unit.baseSP;
-        if (player1Unit.curSP < mpCost)
-        {
-            Log.text = "Insufficient MP";
-            yield break;
-        }
 
         isActionAllowed = false;
         Log.text = ActivePlayer.charName + " is using Skill!";
@@ -552,7 +560,7 @@ public class Controller_Battle : MonoBehaviour
 
         for (int i = 0; i < attackAmount; i++)
         {
-            int HeroDamageOutput = 2 * (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+            int HeroDamageOutput = (ActivePlayer.charATK * 3) - (ActiveEnemy.monsterDEF * 2);
             enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
             enemyPanelAnimator.SetTrigger("On Hit");
             if (i < attackAmount - 1)

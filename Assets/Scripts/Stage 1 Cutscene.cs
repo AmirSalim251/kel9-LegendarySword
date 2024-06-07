@@ -37,7 +37,7 @@ public class Stage1Cutscene : MonoBehaviour
 
     IEnumerator Intro()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
         VirtualCameras[1].enabled = true;
         yield return new WaitForSeconds(1.5f);
         DialogueCanvas.SetActive(true);

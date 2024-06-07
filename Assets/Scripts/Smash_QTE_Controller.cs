@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -68,7 +69,15 @@ public class Smash_QTE_Controller : MonoBehaviour
             qteController.enabled = false;
             button_Before.enabled = false;
             button_After.enabled = false;
-            StartCoroutine(ControllerBattle.PlayerAttack());            
+
+            if (ControllerBattle.isAlexUsingSkill == true)
+            {
+                ControllerBattle.isAlexUsingSkill = false;
+                StartCoroutine(ControllerBattle.AlexFirstSkill());
+            } 
+                
+            else
+                StartCoroutine(ControllerBattle.PlayerAttack());            
         }
 
         if (currentTime >= timeLimit)
@@ -81,6 +90,8 @@ public class Smash_QTE_Controller : MonoBehaviour
             qteController.enabled = false;
             button_Before.enabled = false;
             button_After.enabled = false;
+
+            ControllerBattle.isAlexUsingSkill = false;
             ControllerBattle.PassTurn();
         }
     }

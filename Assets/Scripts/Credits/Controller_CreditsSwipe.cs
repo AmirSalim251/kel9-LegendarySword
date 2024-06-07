@@ -94,7 +94,7 @@ public class Controller_CreditsSwipe : MonoBehaviour
 
     public void BackToMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneTransition.instance.LoadScene("MainMenu");
     }
 
     IEnumerator SimulateButtonPress(Button button)

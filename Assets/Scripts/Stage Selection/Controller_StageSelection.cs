@@ -142,7 +142,7 @@ public class Controller_StageSelection : MonoBehaviour
 
     public void BackToMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneTransition.instance.LoadScene("MainMenu");
     }
 
     public bool EnterStage()

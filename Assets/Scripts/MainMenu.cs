@@ -101,7 +101,7 @@ public class MainMenu : MonoBehaviour
 
     public void playGame()
     {
-        SceneManager.LoadScene("StageSelection");
+        SceneTransition.instance.LoadScene("StageSelection");
     }
 
     public void QuitGame()
@@ -111,7 +111,7 @@ public class MainMenu : MonoBehaviour
 
     public void GoToCredits()
     {
-        SceneManager.LoadScene("Credits");
+        SceneTransition.instance.LoadScene("Credits");
     }
 
     public void ButtonSettings()

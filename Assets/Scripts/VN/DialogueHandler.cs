@@ -264,7 +264,7 @@ public class DialogueHandler : MonoBehaviour
         isDialogueOver = true;
 
         if(SceneManager.GetActiveScene().name == "VN Scene") 
-            SceneManager.LoadScene("CombatScene 3");
+            SceneTransition.instance.LoadScene("CombatScene 3");
     }
 
 }

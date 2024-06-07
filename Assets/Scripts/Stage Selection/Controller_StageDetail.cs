@@ -85,7 +85,7 @@ public class Controller_StageDetail : MonoBehaviour
         Controller_GameStage.Instance.stageChosen = stageData;
         if (Controller_GameStage.Instance.stageChosen != null)
         {
-            SceneManager.LoadScene("VN Scene");
+            SceneTransition.instance.LoadScene("VN Scene");
         }
         
     }

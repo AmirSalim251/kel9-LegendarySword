@@ -23,12 +23,12 @@ public class Controller_Menu : MonoBehaviour
 
     public void MasukStage()
     {
-        SceneManager.LoadScene("StageSelection");
+        SceneTransition.instance.LoadScene("StageSelection");
     }
 
     public void BackToStart()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneTransition.instance.LoadScene("MainMenu");
     }
 
     public void MasukTutorial()

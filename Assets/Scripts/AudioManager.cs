@@ -91,7 +91,7 @@ public class AudioManager : MonoBehaviour
         }
         else if (currentScene == "CombatScene 3" || currentScene == "CombatScene 4")
         {
-            PlayMusic(combatSong);
+            // PlayMusic(combatSong);
         }
 
         if (currentScene == "MainMenu" || currentScene == "CombatScene 3")

@@ -245,7 +245,7 @@ public class GameController : MonoBehaviour
     public void BackToMenu()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("StageSelection");
+        SceneTransition.instance.LoadScene("StageSelection");
     }
 
     public void saveController(Model_CharData charData)
