@@ -64,7 +64,7 @@ public class Smash_QTE_Controller : MonoBehaviour
             SetButtonPressedVisuals(false);
         }
 
-        fillAmount -= decreaseRate;
+        fillAmount -= decreaseRate * Time.deltaTime;
         qteIndicator.fillAmount = fillAmount;
         
         if (fillAmount < 0)

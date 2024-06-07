@@ -8967,8 +8967,8 @@ MonoBehaviour:
   currentTime: 0
   timeLimit: 10
   fillAmount: 0
-  decreaseRate: 0.05
-  increaseRate: 0.3
+  decreaseRate: 1
+  increaseRate: 0.2
   qteIndicator: {fileID: 2018717988}
   buttonWPressed: {fileID: 94078704}
   buttonWNormal: {fileID: 1706620928}
