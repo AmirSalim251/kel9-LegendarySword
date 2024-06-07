@@ -13,7 +13,7 @@ public class DialogueActivator : MonoBehaviour
 
     IEnumerator ActivateDialogue()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.75f);
         dialogue.SetActive(true);
     }
 }
