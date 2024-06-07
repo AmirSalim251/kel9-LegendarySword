@@ -15,11 +15,8 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     public float decreaseRate = 0.05f;
     public float increaseRate = 0.2f;
 
-    public KeyCode input;
-
     public Image qteIndicator;
-    public Image button_Before;
-    public Image button_After;
+    public Image qteButton;
 
     void Awake()
     {   
@@ -32,34 +29,21 @@ public class A_Smash_QTE_Controller : MonoBehaviour
     {
         currentTime = 0;
         fillAmount = 0;
-        button_Before.enabled = true;
+        qteButton.enabled = true;
     }
 
     void Update()
     {
         currentTime += Time.deltaTime;
 
-        if (Input.GetKeyDown(input))
-        {   
+        if (Input.GetKeyDown(KeyCode.A))
+        {
             fillAmount += increaseRate;
             qteIndicator.fillAmount = fillAmount;
-            button_After.enabled = true;
-            button_Before.enabled = false;
         }
 
         fillAmount -= decreaseRate;
         qteIndicator.fillAmount = fillAmount;
-
-        if (fillAmount < 0f)
-        {
-            fillAmount = 0f;
-        }
-
-        if(Input.GetKeyUp(input))
-        {
-            button_After.enabled = false;
-            button_Before.enabled = true;
-        }
 
         if (fillAmount >= 1f)
         {
@@ -68,9 +52,8 @@ public class A_Smash_QTE_Controller : MonoBehaviour
             qteIndicator.fillAmount = 0;
             
             qteController.enabled = false;
-            button_Before.enabled = false;
-            button_After.enabled = false;
-            StartCoroutine(ControllerBattle.RTTime());            
+            qteButton.enabled = false;
+            StartCoroutine(ControllerBattle.PlayerAttack());            
         }
 
         if (currentTime >= timeLimit)
@@ -81,8 +64,7 @@ public class A_Smash_QTE_Controller : MonoBehaviour
             qteIndicator.fillAmount = 0;
 
             qteController.enabled = false;
-            button_Before.enabled = false;
-            button_After.enabled = false;
+            qteButton.enabled = false;
             ControllerBattle.PassTurn();
         }
     }
