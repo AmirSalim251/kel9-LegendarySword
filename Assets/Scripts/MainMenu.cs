@@ -198,4 +198,5 @@ public class MainMenu : MonoBehaviour
 public static class SessionManager
 {
     public static bool isNewSession = true;
+    public static bool isNewInven = true;
 }

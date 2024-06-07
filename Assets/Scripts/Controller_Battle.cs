@@ -356,12 +356,14 @@ public class Controller_Battle : MonoBehaviour
 
             //switch from combatUI to resultPanel
             HideCombatUI();
-            
-            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+            gameController.endPanel.SetActive(true);
+
+            /*yield return new WaitForSeconds(0.5f);*/
             gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Right");
+            yield return new WaitForSeconds(1f);
             gameController.transitionPanel.SetActive(false);
 
-            gameController.endPanel.SetActive(true);
+            
 
         }
         else if (state == BattleState.LOST)
@@ -552,7 +554,7 @@ public class Controller_Battle : MonoBehaviour
 
         for (int i = 0; i < attackAmount; i++)
         {
-            int HeroDamageOutput = 2 * (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+            int HeroDamageOutput = (ActivePlayer.charATK * 3) - (ActiveEnemy.monsterDEF * 2);
             enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
             enemyPanelAnimator.SetTrigger("On Hit");
             if (i < attackAmount - 1)

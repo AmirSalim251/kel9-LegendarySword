@@ -147,15 +147,7 @@ public class Controller_StageSelection : MonoBehaviour
 
     public bool EnterStage()
     {
-        if(Controller_GameStage.Instance.stageChosen != null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-        
+        return true;
     }
 
     private void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
