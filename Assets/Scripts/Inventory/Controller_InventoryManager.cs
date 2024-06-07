@@ -47,7 +47,7 @@ public class Controller_InventoryManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+     
     }
 
     public void UseConsumable()
@@ -186,9 +186,9 @@ public class Controller_InventoryManager : MonoBehaviour
             
         }
 
-        LoadInventory();
+        
 
-        if(items.Count == 0)
+        if(items.Count == 0 && SessionManager.isNewInven == true)
         {
             for (int i = 0; i < _existingPanels.Count; i++)
             {
@@ -196,6 +196,20 @@ public class Controller_InventoryManager : MonoBehaviour
                 _existingPanels[i].mouse = mouse;
             }
             SetDefaultConsumablePouch();
+            _inventorySize = _existingPanels.Count;
+
+            SessionManager.isNewInven = false;
+        }
+        else
+        {
+            for (int i = 0; i < _existingPanels.Count; i++)
+            {
+                items.Add(new Controller_ItemSlot(null, 0));
+                _existingPanels[i].mouse = mouse;
+            }
+
+            LoadInventory();
+
             _inventorySize = _existingPanels.Count;
         }
         

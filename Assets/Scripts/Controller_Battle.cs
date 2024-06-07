@@ -358,12 +358,14 @@ public class Controller_Battle : MonoBehaviour
 
             //switch from combatUI to resultPanel
             HideCombatUI();
-            
-            AudioManager.Instance.PlayMusic(AudioManager.Instance.winSong);
+            gameController.endPanel.SetActive(true);
+
+            /*yield return new WaitForSeconds(0.5f);*/
             gameController.transitionPanel.GetComponent<Animator>().Play("Scroll Right");
+            yield return new WaitForSeconds(1f);
             gameController.transitionPanel.SetActive(false);
 
-            gameController.endPanel.SetActive(true);
+            
 
         }
         else if (state == BattleState.LOST)
