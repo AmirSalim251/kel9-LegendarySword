@@ -2330,7 +2330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
       propertyPath: sfxSounds.Array.size
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
       propertyPath: sfxSounds.Array.data[5].clip
@@ -2339,6 +2339,14 @@ PrefabInstance:
     - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
       propertyPath: sfxSounds.Array.data[5].name
       value: qteTrigger
+      objectReference: {fileID: 0}
+    - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
+      propertyPath: sfxSounds.Array.data[6].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 619b87b2ce99892488a3fa75bbef506c, type: 3}
+    - target: {fileID: 6290218136282999706, guid: b8fc98f3c6127a64abbfe1404ab82e20, type: 3}
+      propertyPath: sfxSounds.Array.data[6].name
+      value: buttonStartPressed
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

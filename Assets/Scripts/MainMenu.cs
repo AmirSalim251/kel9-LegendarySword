@@ -65,7 +65,7 @@ public class MainMenu : MonoBehaviour
             if (Input.anyKeyDown)
             {
                 SessionManager.isNewSession = false;
-                AudioManager.Instance.PlaySFX("buttonPressed");
+                AudioManager.Instance.PlaySFX("buttonStartPressed");
                 StartCoroutine(ExitTitleScreen());
             }
         }
