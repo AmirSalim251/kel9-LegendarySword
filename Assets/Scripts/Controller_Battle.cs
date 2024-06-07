@@ -104,9 +104,9 @@ public class Controller_Battle : MonoBehaviour
     IEnumerator QTEEvent()
     {
         isActionAllowed = false;
-        Log.text = "Press 'A' key repeatedly to attack!";
-        Debug.Log("Press 'A' key repeatedly to attack!");
         qteController.enabled = true;
+        Log.text = "Press '" + qteController.input.ToString() + "' key repeatedly to attack!";
+        Debug.Log("Press '" + qteController.input.ToString() + "' key repeatedly to attack!");
         yield return null;
     }
 

@@ -19,7 +19,7 @@ public class Smash_QTE_Controller : MonoBehaviour
 
     [Header("QTE Indicator")]
     public Image qteIndicator;
-    private KeyCode input;
+    public KeyCode input;
     
     [Header("Keys")]
     public Image buttonWPressed;

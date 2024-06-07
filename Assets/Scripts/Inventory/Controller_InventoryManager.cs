@@ -47,7 +47,14 @@ public class Controller_InventoryManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-     
+        //tes add item
+        /*if(Input.GetKey(KeyCode.End))
+        {
+            AddItem(itemDictionary.GetValueByKey("Potion"), 3);
+            AddItem(itemDictionary.GetValueByKey("Elixir"), 3);
+            AddItem(itemDictionary.GetValueByKey("Soulstone"), 3);
+        }*/
+
     }
 
     public void UseConsumable()
