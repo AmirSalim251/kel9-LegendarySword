@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3593,7 +3593,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 650573686}
         m_TargetAssemblyTypeName: Controller_StageDetail, Assembly-CSharp
-        m_MethodName: EnterButton
+        m_MethodName: OpenPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4450,6 +4450,10 @@ PrefabInstance:
       propertyPath: inventPanel
       value: 
       objectReference: {fileID: 1880974875}
+    - target: {fileID: 6889017573178118913, guid: 4ba62bef3216ae040b1d39100aa12083, type: 3}
+      propertyPath: _inventorySize
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 7145560641430828631, guid: 4ba62bef3216ae040b1d39100aa12083, type: 3}
       propertyPath: m_Name
       value: InventoryPanel

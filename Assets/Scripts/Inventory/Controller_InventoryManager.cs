@@ -48,11 +48,12 @@ public class Controller_InventoryManager : MonoBehaviour
     void Update()
     {
         //tes add item
-        /*if(Input.GetKey(KeyCode.End))
+        /*if (Input.GetKey(KeyCode.End))
         {
             AddItem(itemDictionary.GetValueByKey("Potion"), 3);
             AddItem(itemDictionary.GetValueByKey("Elixir"), 3);
             AddItem(itemDictionary.GetValueByKey("Soulstone"), 3);
+            SaveInventory();
         }*/
 
     }
@@ -220,7 +221,6 @@ public class Controller_InventoryManager : MonoBehaviour
             _inventorySize = _existingPanels.Count;
         }
         
-        
     }
 
     private void SetDefaultConsumablePouch()
@@ -229,6 +229,7 @@ public class Controller_InventoryManager : MonoBehaviour
         AddItem(itemDictionary.GetValueByKey("Elixir"), 3);
         AddItem(itemDictionary.GetValueByKey("Soulstone"), 3);
         RefreshInventory();
+        SaveInventory();
     }
 
     public void MoveSlot(Controller_ItemSlot itemSlot1, Controller_ItemSlot itemSlot2)
@@ -334,7 +335,8 @@ public class Controller_InventoryManager : MonoBehaviour
         selectedItem = null; // Reset selection after swap
     }
 
-    public void SaveInventory()
+    //playerpref ver
+    /*public void SaveInventory()
     {
         InventoryData inventoryData = new InventoryData();
         foreach (var slot in items)
@@ -363,6 +365,48 @@ public class Controller_InventoryManager : MonoBehaviour
 
             RefreshInventory();
         }
+    }*/
+
+    //static ver
+    public void SaveInventory()
+    {
+        InventoryData.itemSlots.Clear();
+        foreach (var slot in items)
+        {
+            InventoryData.itemSlots.Add(new ItemSlotData(slot));
+        }
+        Debug.Log(InventoryData.itemSlots.Count);
+        /*string json = JsonUtility.ToJson(inventoryData, true);
+        File.WriteAllText(Application.persistentDataPath + "/inventory.json", json);*/
+    }
+
+    public void LoadInventory()
+    {
+        /*string path = Application.persistentDataPath + "/inventory.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            InventoryData inventoryData = JsonUtility.FromJson<InventoryData>(json);
+
+            items.Clear();
+            foreach (var slotData in inventoryData.itemSlots)
+            {
+                BaseItem item = itemDictionary.GetValueByKey(slotData.itemName.ToString());
+                items.Add(new Controller_ItemSlot(item, slotData.stacks));
+            }
+
+            RefreshInventory();
+        }*/
+
+        items.Clear();
+        foreach (var slotData in InventoryData.itemSlots)
+        {
+            BaseItem item = itemDictionary.GetValueByKey(slotData.itemName.ToString());
+            items.Add(new Controller_ItemSlot(item, slotData.stacks));
+        }
+
+        RefreshInventory();
+        Debug.Log("inventory data fully loaded" );
     }
 
     public void OpenInventory()
@@ -408,7 +452,8 @@ public class ItemSlotData
 }
 
 [System.Serializable]
-public class InventoryData
+public static class InventoryData
 {
-    public List<ItemSlotData> itemSlots = new List<ItemSlotData>();
+    /*public List<ItemSlotData> itemSlots = new List<ItemSlotData>();*/
+    public static List<ItemSlotData> itemSlots = new List<ItemSlotData>();
 }

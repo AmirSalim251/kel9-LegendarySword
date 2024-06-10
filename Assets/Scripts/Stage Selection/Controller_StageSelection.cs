@@ -44,6 +44,17 @@ public class Controller_StageSelection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Controller_GameStage.Instance.stageChosen != null)
+        {
+
+            btnConfirm.SetActive(true);
+        }
+        else
+        {
+            
+            btnConfirm.SetActive(false);
+        }
+
         if (Input.GetKeyUp(KeyCode.B))
         {
             StartCoroutine(SimulateButtonPress(btnBack.GetComponent<Button>()));
