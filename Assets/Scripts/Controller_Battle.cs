@@ -15,7 +15,6 @@ public class Controller_Battle : MonoBehaviour
     public GameController gameController;
 
     public GameObject combatUI;
-    public GameObject commandPanel;
 
     public TMP_Text Log;
 
@@ -57,6 +56,12 @@ public class Controller_Battle : MonoBehaviour
     public int totalCharDead;
 
     public bool isAlexUsingSkill = false;
+    public GameObject commandPanel;
+    
+   
+  
+      
+
 
     /*void Awake()
     {
@@ -69,20 +74,25 @@ public class Controller_Battle : MonoBehaviour
         qteController = GameObject.FindGameObjectWithTag("QTEController").GetComponent<Smash_QTE_Controller>();
         rtController = GameObject.FindGameObjectWithTag("RTController").GetComponent<Controller_RT>();
         qteCheck = false;
+        
+        
         StartCoroutine(SetupBattle());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!isActionAllowed)
-        {
-            commandPanel.SetActive(false);
-        }
-        else
-        {
-            commandPanel.SetActive(true);
-        }
+           if(!isActionAllowed)
+    {
+        commandPanel.SetActive(false);
+    }
+    else
+    {
+        commandPanel.SetActive(true);
+    }
+        turnCounter.SetText(turnCount.ToString());
+        
+    
     }
     IEnumerator SetupBattle()
     {
@@ -125,8 +135,22 @@ public class Controller_Battle : MonoBehaviour
         yield return null;
     }
 
+   
+   public void playerAttackRT(){
+        int HeroDamageOutput = (ActivePlayer.charATK * 4) - (ActiveEnemy.monsterDEF * 2);
+        bool enemyIsDead = ActiveEnemy.TakeDamage(HeroDamageOutput);
+         if (enemyIsDead)
+            {
+                state = BattleState.WON;
+                StartCoroutine(EndBattle());
+            }
+       
+   }
+
+   
     public IEnumerator PlayerAttack()
     {
+      
         isActionAllowed = false;
         Log.text = ActivePlayer.charName + " is attacking!";
 
@@ -146,118 +170,16 @@ public class Controller_Battle : MonoBehaviour
         // Wait before passing turn
         yield return new WaitForSeconds(1.25f);
 
-        if (enemyIsDead)
-        {
-            state = BattleState.WON;
-            StartCoroutine(EndBattle());
-        }
-        else
-        {
-            PassTurn();
-        }
-    }
-
-    public IEnumerator PlayerFalseAttack()
-    {
-        Log.text = ActivePlayer.charName + " is attacking " + ActiveTarget.charName + "???";
-
-        isActionAllowed = false;
-
-        yield return new WaitForSeconds(1f);
-
-        //Randomizing target for enemy to attack
-        while (true)
-        {
-
-            int RandomTargetIndex = UnityEngine.Random.Range(0, PlayerAlive.Length);
-            int RandomTargetVal = PlayerAlive[RandomTargetIndex];
-            Debug.Log(RandomTargetVal);
-
-            if (RandomTargetVal == 1)
+            if (enemyIsDead)
             {
-                if (!player1Unit.isDead)
-                {
-                    ActiveTarget = player1Unit;
-                    break;
-                }
-            }
-            else if (RandomTargetVal == 2)
-            {
-                if (!player2Unit.isDead)
-                {
-                    ActiveTarget = player2Unit;
-                    break;
-                }
-            }
-            else if (RandomTargetVal == 3)
-            {
-                if (!player3Unit.isDead)
-                {
-                    ActiveTarget = player3Unit;
-                    break;
-                }
-            }
-        }
-
-        Log.text = "Enemy is attacking " + ActiveTarget.charName;
-
-        if (ActiveTarget.isBlocking == false)
-        {
-
-            ActiveEnemy.animator.SetTrigger("isAttack");
-
-            // Wait for the attack animation
-            yield return new WaitForSeconds(0.85f);
-
-            AudioManager.Instance.PlaySFX("enemyHit");
-
-            int EnemyDamageOutput = (ActiveEnemy.monsterATK * 4) - (ActiveTarget.charDEF * 2);
-            ActiveTarget.isDead = ActiveTarget.TakeDamage(EnemyDamageOutput);
-
-            Debug.Log("Attack berhasil");
-            Debug.Log("Damage dihasilkan: " + EnemyDamageOutput);
-            Debug.Log("Sisa HP " + ActiveTarget.charName + ": " + ActiveTarget.curHP);
-
-        }
-        else if (ActiveTarget.isBlocking == true)
-        {
-            Debug.Log("Attack dihentikan");
-            Log.text = ActiveTarget.charName + " blocked enemy's attack!";
-
-            //reset target block state to false
-            ActiveTarget.isBlocking = false;
-        }
-
-        // Wait before passing turn
-        yield return new WaitForSeconds(1.25f);
-
-        if (ActiveTarget.isDead)
-        {
-            Remove(ActiveTarget);
-
-            if (player1Unit.isDead == true && player2Unit.isDead == true && player3Unit.isDead == true)
-            {
-                state = BattleState.LOST;
+                state = BattleState.WON;
                 StartCoroutine(EndBattle());
             }
-
-        }
-        PassTurn();
-    }
-
-    public IEnumerator PlayerRefuseAttack()
-    {
-        isActionAllowed = false;
-        Log.text = ActivePlayer.charName + " is attacking!";
-
-        yield return new WaitForSeconds(1.25f);
-
-        Log.text = ActivePlayer.charName + " suddenly refuse to act!";
-
-        // Wait before passing turn
-        yield return new WaitForSeconds(1f);
-
-        PassTurn();
+            else
+            {
+                PassTurn();
+            }
+        
     }
 
     IEnumerator PlayerDefend()
@@ -447,7 +369,6 @@ public class Controller_Battle : MonoBehaviour
         }
         PassTurn();
         turnCount++;
-        turnCounter.SetText(turnCount.ToString());
     }
     IEnumerator EndBattle()
     {
@@ -507,11 +428,6 @@ public class Controller_Battle : MonoBehaviour
             gameController.transitionPanel.SetActive(false);
             gameController.endPanel.SetActive(true);
         }
-    }
-
-    public void RandomizeAlexAction()
-    {
-
     }
 
     public void OnAttackButton()

@@ -19,6 +19,7 @@ public class Bar : MonoBehaviour
     private Vector3 playerInitialPosition;
     private Quaternion playerInitialRotation;
     private Rigidbody playerRigidbody;
+   public RagdollController rController;
 
     void Start()
     {
@@ -63,6 +64,7 @@ public class Bar : MonoBehaviour
         // Reset fillAmount for next use if needed
         fillAmount = 1f;
         bar.fillAmount = fillAmount;
+        rController.RagdollOff();
     }
 
     void ResetplayerPosition()

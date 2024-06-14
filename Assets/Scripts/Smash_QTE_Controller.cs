@@ -86,7 +86,7 @@ public class Smash_QTE_Controller : MonoBehaviour
                 StartCoroutine(ControllerBattle.AlexFirstSkill());
             } 
             else
-                StartCoroutine(ControllerBattle.PlayerAttack());                        
+                StartCoroutine(ControllerBattle.RTTime());                        
         }
 
         if (currentTime >= timeLimit)

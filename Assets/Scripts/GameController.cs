@@ -52,6 +52,7 @@ public class GameController : MonoBehaviour
 
     public GameObject partyMem2;
     public Vector3 partyMem2SpawnPos;
+    private GameObject spawnedMonster;
 
     [Header("Stage Info")]
     public StageData currentStage;
@@ -163,13 +164,21 @@ public class GameController : MonoBehaviour
     {
         if(monster != null)
         {
-            Instantiate(monster, monsterSpawnPos, Quaternion.Euler(0,90,0));
+            spawnedMonster = Instantiate(monster, monsterSpawnPos, Quaternion.Euler(0,90,0));
         }
     }
 
     public void GenerateChars() 
     {
         
+    }
+    public Collider GetSpawnedMonsterCollider()
+    {
+        if (spawnedMonster != null)
+        {
+            return spawnedMonster.GetComponent<Collider>();
+        }
+        return null;
     }
 
     public void ButtonPauseAction()
