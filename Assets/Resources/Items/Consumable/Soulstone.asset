@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65700f3d66461134faa3fcb666b84b88, type: 3}
+  m_Name: Soulstone
+  m_EditorClassIdentifier: 
+  itemName: Soulstone
+  itemDescription: Mystical stone that has the power to return souls to the mortal
+    world. Revive fallen characters on use.
+  itemIcon: {fileID: 21300000, guid: 52fa00130a9d5734e983a90ad54d80fd, type: 3}
+  itemAmount: 9999
+  maxQuantity: 99
+  battleData: {fileID: 0}
+  charData: {fileID: 0}
+  effectHP: 50
+  effectSP: 0
+  effectATK: 0
+  effectDEF: 0
+  consumableType: 1
+  isItemUsed: 0

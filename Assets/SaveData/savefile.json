@@ -1,0 +1,13 @@
+{
+  "charName": "Alex",
+  "charID": 1,
+  "charLevel": 1,
+  "charEXP": 0,
+  "baseHP": 150,
+  "baseSP": 5,
+  "charATK": 25,
+  "charDEF": 20,
+  "STR": 3,
+  "DEX": 2,
+  "INT": 2
+}
